@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berit Team — Plugin-arkitektur</title>
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('berit-theme');
+        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = stored || (prefersLight ? 'light' : 'dark');
+        if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #070707;
+    --bg-card:     #0d0d0d;
+    --bg-raised:   #111111;
+    --bg-deep:     #050505;
+    --bg-code:     #0a0a0a;
+    --nav-bg:      rgba(7,7,7,0.82);
+    --border:      rgba(255,255,255,0.07);
+    --border-hi:   rgba(200,169,110,0.3);
+    --text:        #ede9e1;
+    --text-dim:    #888;
+    --text-faint:  #7a7a72;
+    --text-muted:  #b4b0a8;
+    --accent:      #c8a96e;
+    --accent-dim:  rgba(200,169,110,0.15);
+    --accent-fg:   #000;
+    --green:       #5ab878;
+    --amber:       #e5a33a;
+    --red:         #e05a5a;
+    --purple:      #a78bfa;
+    --cyan:        #22d3ee;
+    --orange:      #fb923c;
+    --pink:        #f472b6;
+    --lime:        #a3e635;
+    --teal:        #2dd4bf;
+    --sky:         #38bdf8;
+    --radius:      2px;
+    --mono:        'JetBrains Mono', ui-monospace, monospace;
+    --sans:        'Geist', system-ui, -apple-system, sans-serif;
+    --noise-opacity: 0.03;
+  }
+
+  [data-theme="light"] {
+    --bg:          #faf7f1;
+    --bg-card:     #f2eee5;
+    --bg-raised:   #ece7db;
+    --bg-deep:     #e6e1d4;
+    --bg-code:     #f0ebdf;
+    --nav-bg:      rgba(250,247,241,0.88);
+    --border:      rgba(0,0,0,0.09);
+    --border-hi:   rgba(140,108,48,0.45);
+    --text:        #1a1713;
+    --text-dim:    #5a554c;
+    --text-faint:  #6b6560;
+    --text-muted:  #7a7470;
+    --accent:      #8c6c30;
+    --accent-dim:  rgba(140,108,48,0.14);
+    --accent-fg:   #faf7f1;
+    --green:       #3d8858;
+    --amber:       #b57e25;
+    --red:         #b24545;
+    --noise-opacity: 0.02;
+  }
+
+  html { color-scheme: dark; scroll-behavior: smooth; }
+  [data-theme="light"] { color-scheme: light; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Nav */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: var(--nav-bg);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo::before { content: '['; color: var(--accent); margin-right: 2px; }
+  .nav-logo::after  { content: ']'; color: var(--accent); margin-left: 2px; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lang-switch {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .lang-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    padding: 5px 10px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lang-btn.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--text);
+    background: var(--bg-raised);
+  }
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hi); color: var(--accent); }
+  .theme-toggle svg { width: 14px; height: 14px; display: block; }
+  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: block; }
+  [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+  [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 8px;
+    background: var(--bg-card);
+    color: var(--accent);
+    padding: 8px 16px;
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-decoration: none;
+    z-index: 9998;
+    transition: top 0.1s;
+  }
+  .skip-link:focus { top: 8px; }
+
+  /* Back to top */
+  .back-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
+    z-index: 50;
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  .back-top.visible { opacity: 1; transform: translateY(0); }
+  .back-top:hover { color: var(--accent); border-color: var(--border-hi); }
+
+  /* Focus visible */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Layout */
+  .container { max-width: 960px; margin: 0 auto; padding: 96px 24px 96px; }
+  header { margin-bottom: 64px; }
+  header .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-family: var(--mono); }
+  h1 { font-size: 36px; font-weight: 500; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.02em; font-family: var(--mono); }
+  header p { font-size: 15px; color: var(--text-dim); max-width: 640px; }
+  section { margin-bottom: 56px; }
+  h2 { font-size: 18px; font-weight: 500; margin-bottom: 20px; letter-spacing: -0.01em; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  p, li { font-size: 14px; color: var(--text-dim); }
+  p + p { margin-top: 10px; }
+  code { font-family: var(--mono); font-size: 12px; }
+  .section-num { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; font-family: var(--mono); }
+  .spacer { height: 12px; }
+
+  /* File tree */
+  .file-tree { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; font-family: var(--mono); font-size: 13px; line-height: 1.8; overflow-x: auto; white-space: pre; }
+  .file-tree .dir { color: var(--accent); }
+  .file-tree .file { color: var(--text-dim); }
+  .file-tree .comment { color: var(--text-faint); font-style: italic; }
+  .file-tree .new { color: var(--green); }
+
+  /* Agent grid */
+  .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .agent-grid { grid-template-columns: 1fr; } }
+  .agent-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+  .agent-card:hover { border-color: var(--border-hi); transform: translateY(-1px); }
+  .agent-card .agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .agent-card .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .agent-card .agent-name { font-size: 15px; font-weight: 600; color: var(--text); font-family: var(--mono); }
+  .agent-card .agent-role { font-size: 12px; font-weight: 500; color: var(--text-faint); margin-left: auto; background: var(--bg-raised); padding: 2px 8px; border-radius: var(--radius); }
+  .agent-card .model-tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: var(--radius); text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--mono); }
+  .model-opus { background: rgba(167,139,250,0.15); color: var(--purple); }
+  .model-sonnet { background: rgba(34,211,238,0.15); color: var(--cyan); }
+  .agent-card .agent-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 12px; }
+  .agent-card .tools-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); margin-bottom: 6px; font-family: var(--mono); }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: var(--radius); background: var(--bg-raised); color: var(--text-dim); border: 1px solid var(--border); }
+  .orchestrator-card { grid-column: 1 / -1; }
+
+  /* Code block */
+  .code-block { background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .code-block .code-header { padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 500; color: var(--text-faint); display: flex; align-items: center; gap: 8px; font-family: var(--mono); background: var(--bg-card); }
+  .code-block .code-header .dot-row { display: flex; gap: 5px; }
+  .code-block .code-header .dot-row span { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+  .code-block pre { padding: 16px 20px; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; overflow-x: auto; color: var(--text-dim); }
+  .code-block pre .kw { color: var(--accent); }
+  .code-block pre .str { color: var(--green); }
+  .code-block pre .cm { color: var(--text-faint); }
+  .code-block pre .fn { color: var(--cyan); }
+  .code-block pre .num { color: var(--orange); }
+
+  /* Workflow */
+  .workflow { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .workflow-step { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-radius: var(--radius); background: var(--bg-raised); border: 1px solid var(--border); min-width: 280px; justify-content: center; }
+  .workflow-step .step-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .workflow-step .step-label { font-size: 13px; font-weight: 500; color: var(--text); font-family: var(--mono); }
+  .workflow-step .step-detail { font-size: 12px; color: var(--text-dim); }
+  .workflow-arrow { width: 1px; height: 24px; background: var(--border); position: relative; }
+  .workflow-arrow::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--border); }
+  .workflow-parallel { display: flex; gap: 14px; align-items: stretch; }
+  .workflow-parallel .workflow-step { min-width: 200px; }
+  .parallel-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); margin: 4px 0 -4px; font-family: var(--mono); }
+
+  /* Principle grid */
+  .principle-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .principle-grid { grid-template-columns: 1fr; } }
+  .principle-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.15s; }
+  .principle-card:hover { border-color: var(--border-hi); }
+  .principle-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; font-family: var(--mono); }
+  .principle-card p { font-size: 12px; color: var(--text-dim); }
+
+  /* Matrix */
+  .matrix-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
+  .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .matrix-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); border-bottom: 1px solid var(--border); background: var(--bg-card); white-space: nowrap; font-family: var(--mono); }
+  .matrix-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-dim); white-space: nowrap; }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table .check { color: var(--green); font-weight: 600; }
+  .matrix-table .cross { color: var(--text-faint); }
+
+  /* Callout */
+  .callout { background: var(--accent-dim); border: 1px solid var(--border-hi); border-radius: var(--radius); padding: 14px 18px; margin-top: 16px; }
+  .callout p { font-size: 13px; color: var(--accent); }
+  .callout strong { font-weight: 600; }
+
+  /* Prompt details */
+  .prompt-details { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; transition: border-color 0.2s; }
+  .prompt-details[open] { border-color: var(--border-hi); }
+  .prompt-details summary { padding: 14px 20px; cursor: pointer; font-size: 14px; color: var(--text); list-style: none; display: flex; align-items: center; user-select: none; gap: 8px; }
+  .prompt-details summary::-webkit-details-marker { display: none; }
+  .prompt-details summary::after { content: '+'; margin-left: auto; font-family: var(--mono); font-size: 16px; color: var(--text-faint); }
+  .prompt-details[open] summary::after { content: '\2212'; }
+  .prompt-details .code-block { border: none; border-top: 1px solid var(--border); margin: 0; border-radius: 0 0 var(--radius) var(--radius); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 64px;
+  }
+  .footer-left { display: flex; flex-direction: column; gap: 4px; }
+  .footer-links { display: flex; gap: 24px; align-items: center; }
+  .footer-link {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-link:hover { color: var(--text-dim); }
+
+  /* Depth */
+  h1 { text-shadow: 0 0 60px rgba(200,169,110,0.08); }
+  header .label { text-shadow: 0 0 24px rgba(200,169,110,0.15); }
+  .orchestrator-card { border-color: var(--accent) !important; box-shadow: 0 0 32px rgba(200,169,110,0.04); }
+  .callout { box-shadow: 0 0 24px rgba(200,169,110,0.03); }
+  .section-num { text-shadow: 0 0 16px rgba(200,169,110,0.10); }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Hoppa till huvudinnehåll</a>
+<nav class="site-nav">
+  <a href="index.html" class="nav-logo">berit-team</a>
+  <div class="nav-right">
+    <div class="lang-switch" role="group" aria-label="Språk">
+      <button class="lang-btn active" data-lang="sv" aria-pressed="true">SV</button>
+      <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Byt till ljust tema" aria-pressed="false">
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="container" id="main-content">
+
+  <header>
+    <div class="label" data-i18n="header.label">Claude Cowork Plugin — v0.2.0</div>
+    <h1>berit-team</h1>
+    <p data-i18n="header.desc">Multiagent-plugin som simulerar ett svenskt produktteam. En orchestrator (Berit) delegerar uppgifter till nio specialistagenter via Claude Agent SDK:ns subagent-system.</p>
+  </header>
+
+  <!-- 01 -->
+  <section>
+    <div class="section-num" data-i18n="s01.num">01 — Filstruktur</div>
+    <h2 data-i18n="s01.title">Plugin-katalog</h2>
+    <p data-i18n="s01.desc">Plugin:et lever som en remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All konfiguration sker genom tre typer av filer: plugin-manifest, skill-definition och command-definitions.</p>
+    <div class="spacer"></div>
+    <div class="file-tree"><span class="dir">berit-team/</span>
+├── <span class="dir">.claude-plugin/</span>
+│   └── <span class="file">plugin.json</span>                        <span class="comment" data-i18n="s01.c1"># manifest: namn, version, beskrivning</span>
+├── <span class="dir">skills/</span>
+│   └── <span class="dir">berit-orchestrator/</span>
+│       ├── <span class="file">SKILL.md</span>                       <span class="comment" data-i18n="s01.c2"># orchestrator-instruktioner, workflow, handoff-protokoll</span>
+│       └── <span class="dir">references/</span>
+│           └── <span class="file">agent-prompts.md</span>           <span class="comment" data-i18n="s01.c3"># system prompts för alla 9 agenter</span>
+├── <span class="dir">commands/</span>
+│   ├── <span class="file">berit.md</span>                           <span class="comment" data-i18n="s01.c4"># /berit — entrypoint, startar orchestratorn</span>
+│   ├── <span class="new">anna.md</span>                            <span class="comment" data-i18n="s01.c5"># /anna — business analyst       (sonnet)</span>
+│   ├── <span class="file">gunnar.md</span>                          <span class="comment" data-i18n="s01.c6"># /gunnar — produkt &amp; spec       (opus)</span>
+│   ├── <span class="file">astrid.md</span>                          <span class="comment" data-i18n="s01.c7"># /astrid — UX &amp; design          (opus)</span>
+│   ├── <span class="new">maja.md</span>                            <span class="comment" data-i18n="s01.c8"># /maja — data &amp; analytics       (sonnet)</span>
+│   ├── <span class="file">pelle.md</span>                           <span class="comment" data-i18n="s01.c9"># /pelle — frontend              (opus)</span>
+│   ├── <span class="file">sigrid.md</span>                          <span class="comment" data-i18n="s01.c10"># /sigrid — backend              (opus)</span>
+│   ├── <span class="file">torsten.md</span>                         <span class="comment" data-i18n="s01.c11"># /torsten — infra &amp; DB          (opus)</span>
+│   ├── <span class="file">ingrid.md</span>                          <span class="comment" data-i18n="s01.c12"># /ingrid — QA (read-only)       (opus)</span>
+│   └── <span class="new">erik.md</span>                            <span class="comment" data-i18n="s01.c13"># /erik — dokumentation          (sonnet)</span>
+└── <span class="file">README.md</span></div>
+  </section>
+
+  <!-- 02 -->
+  <section>
+    <div class="section-num" data-i18n="s02.num">02 — Plugin manifest</div>
+    <h2>plugin.json</h2>
+    <p data-i18n="s02.desc">Minimalt manifest. Inga MCP-servrar eller externa beroenden — plugin:et använder enbart Agent-verktyget för att starta subagenter.</p>
+    <div class="spacer"></div>
+    <div class="code-block">
+      <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div>.claude-plugin/plugin.json</div>
+<pre>{
+  <span class="str">"name"</span>: <span class="str">"berit-team"</span>,
+  <span class="str">"version"</span>: <span class="str">"0.2.0"</span>,
+  <span class="str">"description"</span>: <span class="str">"Swedish product team orchestrated by Berit..."</span>,
+  <span class="str">"author"</span>: { <span class="str">"name"</span>: <span class="str">"Jonathan Svedelius"</span> },
+  <span class="str">"keywords"</span>: [<span class="str">"orchestrator"</span>, <span class="str">"multi-agent"</span>, <span class="str">"product-team"</span>, <span class="str">"swedish"</span>]
+}</pre>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section>
+    <div class="section-num" data-i18n="s03.num">03 — Två anropslägen</div>
+    <h2 data-i18n="s03.title">Orchestrerat vs. direkt</h2>
+    <p data-i18n="s03.desc">Plugin:et exponerar två sätt att nå teamet. <code style="color:var(--accent)">/berit</code> startar den fulla orkestreringsloopen. De individuella kommandona (<code style="color:var(--text-muted)">/anna</code>, <code style="color:var(--text-muted)">/gunnar</code>, etc.) kör en enskild agent direkt, utan orchestrator.</p>
+    <div class="spacer"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="principle-card" style="border-left: 2px solid var(--accent);">
+        <h4 style="color:var(--accent)" data-i18n="s03.card1.title">/berit &lt;uppdrag&gt;</h4>
+        <p data-i18n="s03.card1.desc">Laddar <code>berit-orchestrator</code> skill + alla agent-prompts. Skapar handoff.md och delegerar till rätt agenter i sekvens. Model: <strong style="color:var(--text)">opus</strong>.</p>
+      </div>
+      <div class="principle-card" style="border-left: 2px solid var(--text-dim);">
+        <h4 style="color:var(--text-muted)" data-i18n="s03.card2.title">/agent &lt;uppgift&gt;</h4>
+        <p data-i18n="s03.card2.desc">Laddar agentens system prompt. Läser handoff.md om den finns. Kör uppgiften isolerat. Model varierar: <strong style="color:var(--purple)">opus</strong> eller <strong style="color:var(--cyan)">sonnet</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section>
+    <div class="section-num" data-i18n="s04.num">04 — Agenter</div>
+    <h2 data-i18n="s04.title">Teamet</h2>
+
+    <div class="agent-grid">
+      <div class="agent-card orchestrator-card" style="border-color: var(--accent);">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--accent)"></div>
+          <span class="agent-name">Berit</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role">Orchestrator</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.berit.desc">Planerar, delegerar och syntetiserar. Implementerar aldrig direkt. Skapar och underhåller handoff.md. Kör agenter i den ordning uppgiften kräver och verifierar konsistens mellan varje steg.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list">
+          <span class="tag">Agent</span><span class="tag">Read</span><span class="tag">Write</span><span class="tag">Edit</span><span class="tag">Glob</span><span class="tag">Grep</span><span class="tag">Bash</span>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--lime)"></div>
+          <span class="agent-name">Anna</span>
+          <span class="model-tag model-sonnet">sonnet</span>
+          <span class="agent-role">Business Analyst</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.anna.desc">Kravanalys, processkartläggning, gap-analys, intressentpåverkan. Översätter affärsbehov till konkreta, testbara krav som Gunnar kan använda i sin spec.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Write</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--green)"></div>
+          <span class="agent-name">Gunnar</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role" data-i18n="s04.gunnar.role">Produkt & Spec</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.gunnar.desc">Feature-specs med problembeskrivning, mål/icke-mål, testbara acceptanskriterier och framgångsmått. Tar vaga ideer och returnerar struktur.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Write</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--pink)"></div>
+          <span class="agent-name">Astrid</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role">UX & Design</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.astrid.desc">Granskar hierarki, läsbarhet, saknade states (empty/loading/error), kognitiv last och WCAG 2.1 AA. B2B-fokus: tillit, snabbhet, operationell tydlighet.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Write</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--teal)"></div>
+          <span class="agent-name">Maja</span>
+          <span class="model-tag model-sonnet">sonnet</span>
+          <span class="agent-role">Data & Analytics</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.maja.desc">Mätplaner, dashboard-design, eventspårning (verb_noun-konvention), A/B-test-design. Säkerställer att varje feature har en mätplan innan implementation.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Write</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--cyan)"></div>
+          <span class="agent-name">Pelle</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role">Frontend</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.pelle.desc">React/Next.js, TypeScript (aldrig <code>any</code>), server components default, Tailwind CSS, Zod för formulärvalidering. Produktionsredo kod.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Edit</span><span class="tag">Write</span><span class="tag">Bash</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--purple)"></div>
+          <span class="agent-name">Sigrid</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role">Backend & API</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.sigrid.desc">Supabase Edge Functions, auth, input-validering. RLS-first — föreslår aldrig att stänga av RLS. Separerar affärslogik från databasåtkomst.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Edit</span><span class="tag">Write</span><span class="tag">Bash</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--orange)"></div>
+          <span class="agent-name">Torsten</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role">Data & Infra</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.torsten.desc">Databasdesign, SQL-migrationer, RLS-policies, index-optimering. snake_case, plurala tabellnamn. Varje migration inkluderar rollback-strategi.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Edit</span><span class="tag">Write</span><span class="tag">Bash</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--red)"></div>
+          <span class="agent-name">Ingrid</span>
+          <span class="model-tag model-opus">opus</span>
+          <span class="agent-role" data-i18n="s04.ingrid.role">QA & Kvalitet</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.ingrid.desc">Granskar kod, säkerhet och kvalitet. Medvetet read-only — har ingen Write eller Edit. Strukturerar findings som Kritiskt / Varningar / Förslag med filreferenser och radnummer.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Bash</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="dot" style="background:var(--sky)"></div>
+          <span class="agent-name">Erik</span>
+          <span class="model-tag model-sonnet">sonnet</span>
+          <span class="agent-role" data-i18n="s04.erik.role">Dokumentation</span>
+        </div>
+        <div class="agent-desc" data-i18n="s04.erik.desc">API-docs, runbooks, onboarding-guider, arkitekturbeskrivningar, changelogs. Skriver dokumentation som utvecklare faktiskt läser. Fokus på varför och gotchas.</div>
+        <div class="tools-label">Tillåtna verktyg</div>
+        <div class="tag-list"><span class="tag">Read</span><span class="tag">Edit</span><span class="tag">Write</span><span class="tag">Glob</span><span class="tag">Grep</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 System prompts -->
+  <section>
+    <div class="section-num" data-i18n="s05.num">05 — System prompts</div>
+    <h2 data-i18n="s05.title">Fullständiga agentinstruktioner</h2>
+    <p data-i18n="s05.desc">Dessa prompts lever i <code style="color:var(--accent)">references/agent-prompts.md</code> och injiceras ordagrant i varje subagent-anrop. Handoff-blocket i slutet av varje prompt är identiskt — det tvingar agenten att läsa befintliga beslut och logga sina egna.</p>
+    <div class="spacer"></div>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--lime);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Anna</strong> — Business Analyst
+        <span class="model-tag model-sonnet" style="margin-left:8px">sonnet</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.anna.prompt">Du är Anna, en erfaren business analyst med fokus på
+kravanalys och processförståelse.
+
+För varje analys du gör, inkludera:
+<span class="num">1.</span> <span class="fn">Nuläge</span> — hur fungerar processen/flödet idag?
+<span class="num">2.</span> <span class="fn">Behovskartläggning</span> — vilka problem upplever
+   användare och intressenter?
+<span class="num">3.</span> <span class="fn">Gap-analys</span> — vad saknas mellan nuläge och önskat läge?
+<span class="num">4.</span> <span class="fn">Kravspecifikation</span> — funktionella och icke-funktionella
+   krav, prioriterade
+<span class="num">5.</span> <span class="fn">Intressentpåverkan</span> — vem berörs och hur?
+<span class="num">6.</span> <span class="fn">Beroenden och risker</span>
+
+Översätt affärsbehov till konkreta, testbara krav som
+Gunnar kan använda i sin spec.
+Skriv på svenska. Var konkret, strukturerad, och led
+med det viktigaste.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--green);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Gunnar</strong> — <span data-i18n="s05.gunnar.role">Produkt &amp; Spec</span>
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.gunnar.prompt">Du är Gunnar, en erfaren produktledare. Du skriver tydliga,
+strukturerade specs.
+
+För varje feature du specificerar, inkludera:
+<span class="num">1.</span> <span class="fn">Problembeskrivning</span> — varför behövs detta?
+<span class="num">2.</span> <span class="fn">Mål och icke-mål</span>
+<span class="num">3.</span> <span class="fn">Acceptanskriterier</span> (testbara)
+<span class="num">4.</span> <span class="fn">Framgångsmått</span>
+<span class="num">5.</span> <span class="fn">Öppna frågor</span>
+
+Skriv på svenska. Var konkret, undvik fluff. Led med slutsatsen.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--pink);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Astrid</strong> — UX &amp; Design
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.astrid.prompt">Du är Astrid, en senior UX-designer. Du granskar design och flöden.
+
+Fokusera på:
+<span class="fn">- Visuell hierarki och läsbarhet</span>
+<span class="fn">- Saknade states: empty, loading, error, success</span>
+<span class="fn">- Kognitiv last</span> — kan användaren förstå vad som händer?
+<span class="fn">- Tillgänglighet</span> (WCAG 2.1 AA)
+<span class="fn">- Tydliga labels, CTA:er och statusmeddelanden</span>
+
+I B2B-kontext: prioritera tillit, snabbhet och operationell tydlighet.
+Skriv på svenska. Var direkt och konstruktiv.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--teal);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Maja</strong> — Data &amp; Analytics
+        <span class="model-tag model-sonnet" style="margin-left:8px">sonnet</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.maja.prompt">Du är Maja, en senior dataanalytiker med fokus på
+produktanalys och mätbarhet.
+
+Fokusera på:
+<span class="fn">- Mätplaner:</span> vilka events och properties behöver spåras?
+<span class="fn">- Datamodellering:</span> hur struktureras analyticsdata?
+<span class="fn">- Dashboard-design:</span> nyckeltal, granularitet, filter
+<span class="fn">- Eventspårning:</span> namnkonventioner, payload-scheman
+<span class="fn">- A/B-test-design:</span> hypotes, segmentering, sample size
+
+Principer:
+- Varje feature ska ha en mätplan innan implementation
+- Eventnamn följer <span class="str">verb_noun</span>-konvention
+- Separera vanity metrics från actionable metrics
+- Dokumentera vad ett nyckeltal mäter, hur det beräknas,
+  och vad som är ett normalt intervall
+
+Skriv på svenska. Var precis med definitioner.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--cyan);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Pelle</strong> — Frontend
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.pelle.prompt">Du är Pelle, en senior frontend-utvecklare specialiserad
+på React och Next.js.
+
+Principer:
+<span class="fn">- TypeScript, alltid. Inga `any`.</span>
+<span class="fn">- Komponentbaserad arkitektur</span> med tydlig separation
+<span class="fn">- Hantera loading, error och empty states</span> i varje vy
+<span class="fn">- Server components som default</span>, client vid behov
+<span class="fn">- Tailwind CSS</span> för styling
+<span class="fn">- Formulärvalidering med Zod</span>
+
+Skriv produktionsredo kod. Kommentera bara det som inte
+är uppenbart.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--purple);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Sigrid</strong> — Backend &amp; API
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.sigrid.prompt">Du är Sigrid, en senior backend-utvecklare med djup
+Supabase-erfarenhet.
+
+Principer:
+<span class="fn">- RLS-first:</span> varje tabell ska ha RLS-policies.
+  Föreslå aldrig att stänga av RLS.
+<span class="fn">- Input-validering</span> på alla endpoints
+<span class="fn">- Felhantering</span> med tydliga felmeddelanden och statuskoder
+<span class="fn">- TypeScript</span> för Edge Functions
+<span class="fn">- Separera affärslogik</span> från databasåtkomst
+<span class="fn">- Dokumentera API-kontrakt</span> med typer
+
+Skriv säker, underhållbar kod. Flagga säkerhetsrisker explicit.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--orange);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Torsten</strong> — <span data-i18n="s05.torsten.role">Data &amp; Infrastruktur</span>
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.torsten.prompt">Du är Torsten, en senior databasingenjör och
+infrastrukturspecialist.
+
+Principer:
+<span class="fn">- Varje migration inkluderar RLS-policies</span> för nya tabeller
+<span class="fn">- Namnkonventioner:</span> snake_case, plurala tabellnamn
+<span class="fn">- Index</span> för alla foreign keys och vanliga WHERE-kolumner
+<span class="fn">- Constraints i databasen</span>, inte bara i applikationen
+<span class="fn">- Dokumentera varje migration</span> med syfte och rollback-strategi
+
+Skriv SQL som är tydligt, korrekt och prestandaoptimerat.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--red);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Ingrid</strong> — <span data-i18n="s05.ingrid.role">QA &amp; Kvalitet</span>
+        <span class="model-tag model-opus" style="margin-left:8px">opus</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.ingrid.prompt">Du är Ingrid, en senior QA-ingenjör och säkerhetsgranskare.
+
+Du har medvetet <span class="kw">INGEN skrivbehörighet</span> för projektfiler.
+Du granskar och rapporterar.
+Du <span class="kw">FÅR</span> skriva till .context/handoff.md för att logga
+dina findings.
+
+Fokusera på:
+<span class="fn">- Säkerhet:</span> injection, auth-bypass, dataläckage, saknad validering
+<span class="fn">- Korrekthet:</span> edge cases, off-by-one, race conditions
+<span class="fn">- Testbarhet:</span> saknade tester, otillräcklig coverage
+<span class="fn">- Kodkvalitet:</span> namngivning, komplexitet, duplicering
+
+Strukturera din rapport som:
+<span class="num">1.</span> <span class="str">Kritiska issues</span> (måste fixas)
+<span class="num">2.</span> <span class="str">Varningar</span> (bör fixas)
+<span class="num">3.</span> <span class="str">Förslag</span> (nice-to-have)
+
+Var saklig och specifik. Inkludera filreferenser och radnummer.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details class="prompt-details">
+      <summary>
+        <span class="dot" style="background:var(--sky);display:inline-block;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <strong>Erik</strong> — <span data-i18n="s05.erik.role">Teknisk Dokumentation</span>
+        <span class="model-tag model-sonnet" style="margin-left:8px">sonnet</span>
+      </summary>
+      <div class="code-block"><pre data-i18n="s05.erik.prompt">Du är Erik, en senior teknisk skribent. Du skriver
+dokumentation som utvecklare faktiskt läser.
+
+Dokumentationstyper du behärskar:
+<span class="fn">- API-dokumentation</span> med endpoints, parametrar, exempel, felkoder
+<span class="fn">- Runbooks</span> för drift och incidenthantering
+<span class="fn">- Onboarding-guider</span> för nya utvecklare
+<span class="fn">- Arkitekturbeskrivningar</span> och systemöversikter
+<span class="fn">- Changelog och release notes</span>
+
+Principer:
+- Skriv för läsaren, inte för dig själv
+- Kod-exempel i varje avsnitt där det är relevant
+- Undvik att dokumentera det uppenbara — fokusera på varför
+  och gotchas
+- Håll strukturen konsekvent: syfte, förutsättningar, steg,
+  felsökning
+- Uppdatera, skriv inte om — bygg vidare på befintlig
+  dokumentation
+
+Skriv på svenska om inte dokumentationen riktar sig till
+en internationell publik.
+
+<span class="kw">## Handoff</span>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns
+   — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du
+   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+  </section>
+
+  <!-- 06 Permission matrix -->
+  <section>
+    <div class="section-num" data-i18n="s06.num">06 — Behörighetsmatris</div>
+    <h2 data-i18n="s06.title">Verktyg per agent</h2>
+    <p data-i18n="s06.desc">Varje command-fil deklarerar <code style="color:var(--accent)">allowed-tools</code> i sin frontmatter. Ingrid saknar Write/Edit medvetet. Analytiker-roller (Anna, Gunnar, Astrid, Maja) saknar Edit och Bash — de producerar dokument, inte kod.</p>
+    <div class="spacer"></div>
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <thead><tr><th>Agent</th><th>Model</th><th>Agent</th><th>Read</th><th>Write</th><th>Edit</th><th>Bash</th><th>Glob</th><th>Grep</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent)">Berit</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--lime)">Anna</strong></td><td><span class="model-tag model-sonnet">sonnet</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">—</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--green)">Gunnar</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">—</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--pink)">Astrid</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">—</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--teal)">Maja</strong></td><td><span class="model-tag model-sonnet">sonnet</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">—</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--cyan)">Pelle</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--purple)">Sigrid</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--orange)">Torsten</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--red)">Ingrid</strong></td><td><span class="model-tag model-opus">opus</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="cross">—</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td><strong style="color:var(--sky)">Erik</strong></td><td><span class="model-tag model-sonnet">sonnet</span></td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">—</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p data-i18n="s06.callout"><strong>Modellval:</strong> Roller som kräver djup reasoning (orkestrering, kodgenerering, UX-analys, säkerhetsgranskning) kör på <strong>opus</strong>. Roller med mer strukturerade, kontextbundna uppgifter (kravanalys, mätplaner, dokumentation) kör på <strong>sonnet</strong> för snabbhet och kostnadseffektivitet.</p>
+    </div>
+  </section>
+
+  <!-- 07 Handoff -->
+  <section>
+    <div class="section-num" data-i18n="s07.num">07 — Handoff-protokoll</div>
+    <h2>.context/handoff.md</h2>
+    <p data-i18n="s07.desc">Kontinuiteten mellan agenter sker via en delad fil: <code style="color:var(--accent)">.context/handoff.md</code>. Berit skapar filen innan första delegering. Varje agent läser den innan den börjar och uppdaterar den när den är klar.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s07.codeheader">.context/handoff.md — exakt format</span></div>
+<pre data-i18n="s07.format"><span class="kw"># Projektkontext</span>
+
+<span class="kw">## Uppdrag</span>
+<span class="cm">[Vad och varför — satt av Berit vid projektstart]</span>
+
+<span class="kw">## Beslut</span>
+<span class="str">- [Datum] [Agent]: [Beslut och motivering]</span>
+<span class="str">- [Datum] [Agent]: [Beslut och motivering]</span>
+
+<span class="kw">## Leveranser</span>
+<span class="str">- [Agent] → [fil]: [beskrivning]</span>
+<span class="str">- [Agent] → [fil]: [beskrivning]</span>
+
+<span class="kw">## Kontrakt &amp; Scheman</span>
+<span class="cm">[Delade typer, DB-scheman, API-kontrakt.
+ Skrivs in av Berit innan parallella agenter startar,
+ så att Sigrid och Pelle bygger mot samma spec.]</span>
+
+<span class="kw">## Öppna frågor</span>
+<span class="str">- [Fråga] (flaggad av [Agent])</span>
+<span class="str">- [Fråga] (flaggad av [Agent])</span></pre>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="principle-grid">
+      <div class="principle-card" style="border-top: 2px solid var(--accent);">
+        <h4 data-i18n="s07.step1.title">Steg 1: Berit skapar</h4>
+        <p data-i18n="s07.step1.desc">Innan första delegering fyller Berit i Uppdrag, mål och constraints.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--green);">
+        <h4 data-i18n="s07.step2.title">Steg 2: Agenter läser + skriver</h4>
+        <p data-i18n="s07.step2.desc">Varje agent läser filen innan start. Lägger till sina beslut och leveranser när den är klar.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--amber);">
+        <h4 data-i18n="s07.step3.title">Steg 3: Berit verifierar</h4>
+        <p data-i18n="s07.step3.desc">Efter varje agent läser Berit filen och kontrollerar att inga beslut krockar med tidigare steg.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 Workflow -->
+  <section>
+    <div class="section-num" data-i18n="s08.num">08 — Standard-workflow</div>
+    <h2 data-i18n="s08.title">Exekveringsordning</h2>
+    <p data-i18n="s08.desc">Berit anpassar ordningen efter uppdraget. Det typiska flödet för en ny feature:</p>
+    <div class="spacer"></div>
+    <div class="workflow">
+      <div class="workflow-step"><div class="step-dot" style="background:var(--lime)"></div><span class="step-label">Anna</span><span class="step-detail" data-i18n="s08.d.anna">Kravanalys, nuläge, gap-analys</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--green)"></div><span class="step-label">Gunnar</span><span class="step-detail" data-i18n="s08.d.gunnar">Feature-spec, acceptanskriterier</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--pink)"></div><span class="step-label">Astrid</span><span class="step-detail" data-i18n="s08.d.astrid">UX-granskning av specen</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--teal)"></div><span class="step-label">Maja</span><span class="step-detail" data-i18n="s08.d.maja">Mätplan, eventspårning</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--orange)"></div><span class="step-label">Torsten</span><span class="step-detail" data-i18n="s08.d.torsten">Databas-schema, migrationer, RLS</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="parallel-label" data-i18n="s08.parallel">Parallellt</div>
+      <div class="workflow-parallel">
+        <div class="workflow-step"><div class="step-dot" style="background:var(--purple)"></div><span class="step-label">Sigrid</span><span class="step-detail" data-i18n="s08.d.sigrid">API, Edge Functions</span></div>
+        <div class="workflow-step"><div class="step-dot" style="background:var(--cyan)"></div><span class="step-label">Pelle</span><span class="step-detail" data-i18n="s08.d.pelle">Komponenter, sidor</span></div>
+      </div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--red)"></div><span class="step-label">Ingrid</span><span class="step-detail" data-i18n="s08.d.ingrid">QA-granskning av allt</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step"><div class="step-dot" style="background:var(--sky)"></div><span class="step-label">Erik</span><span class="step-detail" data-i18n="s08.d.erik">Dokumentation</span></div>
+      <div class="workflow-arrow"></div>
+      <div class="workflow-step" style="border-color: var(--accent);"><div class="step-dot" style="background:var(--accent)"></div><span class="step-label">Berit</span><span class="step-detail" data-i18n="s08.d.berit">Slutrapport + ev. omarbetning</span></div>
+    </div>
+    <div class="callout">
+      <p data-i18n="s08.callout"><strong>Adaptivt:</strong> Inte alla uppdrag behöver alla agenter. Ren UX-granskning hoppar över Torsten och Sigrid. Buggfix kan starta med Ingrid, sedan rätt specialist. Dokumentationsuppgift startar med Erik direkt.</p>
+    </div>
+  </section>
+
+  <!-- 09 Delegation -->
+  <section>
+    <div class="section-num" data-i18n="s09.num">09 — Delegering</div>
+    <h2 data-i18n="s09.title">Hur Berit anropar en agent</h2>
+    <p data-i18n="s09.desc">Berit använder Agent-verktyget med agentens fulla system prompt (från <code style="color:var(--accent)">references/agent-prompts.md</code>), handoff-instruktion, specifik uppgift, relevanta filer och beroenden.</p>
+    <div class="spacer"></div>
+    <div class="code-block">
+      <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s09.codeheader">Delegerings-template</span></div>
+<pre data-i18n="s09.code"><span class="cm">// 1. Agentens fulla system prompt injiceras</span>
+<span class="str">"Du är Sigrid, en senior backend-utvecklare..."</span>
+
+<span class="cm">// 2. Handoff-instruktion</span>
+<span class="str">"Read .context/handoff.md first."</span>
+
+<span class="cm">// 3. Specifik uppgift</span>
+<span class="str">"Sigrid, your task: Implementera auth-endpoint
+ baserat på Gunnars spec i .context/handoff.md"</span>
+
+<span class="cm">// 4. Kontext</span>
+<span class="str">"Relevant files: src/api/auth.ts
+ Dependencies: Torstens schema (se handoff.md)
+ Constraints: RLS måste vara aktivt"</span>
+
+<span class="cm">// 5. Handoff-uppdatering</span>
+<span class="str">"When done, update .context/handoff.md with your
+ deliveries and decisions."</span></pre>
+    </div>
+  </section>
+
+  <!-- 10 Command frontmatter -->
+  <section>
+    <div class="section-num" data-i18n="s10.num">10 — Command-frontmatter</div>
+    <h2 data-i18n="s10.title">Hur commands konfigureras</h2>
+    <div class="spacer"></div>
+    <div class="code-block">
+      <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s10.codeheader">commands/ingrid.md (exempel)</span></div>
+<pre data-i18n="s10.code"><span class="kw">---</span>
+<span class="fn">description</span>: <span class="str">Ingrid granskar kod, säkerhet och kvalitet</span>
+<span class="fn">allowed-tools</span>: <span class="str">Read, Bash, Glob, Grep</span>         <span class="cm"># ingen Write/Edit</span>
+<span class="fn">model</span>: <span class="str">opus</span>
+<span class="fn">argument-hint</span>: <span class="str">&lt;uppgift&gt;</span>
+<span class="kw">---</span>
+
+Read <span class="str">`${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/
+references/agent-prompts.md`</span> and load Ingrid's system prompt.
+
+You are now Ingrid. The user's task is: <span class="fn">$ARGUMENTS</span>
+
+<span class="kw">IMPORTANT:</span> You have no Write or Edit tools.
+You review and report only.</pre>
+    </div>
+    <div class="spacer"></div>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <h4 style="color:var(--accent)">allowed-tools</h4>
+        <p data-i18n="s10.card1.desc">Styr agentens verktygsaccess. Berit har Agent, Ingrid saknar Write/Edit, analytiker saknar Bash/Edit.</p>
+      </div>
+      <div class="principle-card">
+        <h4 style="color:var(--accent)">model</h4>
+        <p data-i18n="s10.card2.desc">Satt per command-fil. Anna, Maja och Erik kör <strong style="color:var(--cyan)">sonnet</strong>. Resten kör <strong style="color:var(--purple)">opus</strong>.</p>
+      </div>
+      <div class="principle-card">
+        <h4 style="color:var(--accent)">$ARGUMENTS</h4>
+        <p data-i18n="s10.card3.desc">Användarens input injiceras direkt via variabeln. Agenten får uppgiften utan omtolkning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 Quality gate -->
+  <section>
+    <div class="section-num" data-i18n="s11.num">11 — Quality gate</div>
+    <h2 data-i18n="s11.title">Kvalitetskontroll</h2>
+    <div class="principle-grid">
+      <div class="principle-card" style="border-top: 2px solid var(--red);">
+        <h4 data-i18n="s11.card1.title">Konfliktlösning</h4>
+        <p data-i18n="s11.card1.desc">Om en agents output krockar med ett tidigare beslut i handoff.md — Berit stoppar och löser innan nästa steg.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--amber);">
+        <h4 data-i18n="s11.card2.title">Kritiska issues</h4>
+        <p data-i18n="s11.card2.desc">Om Ingrid flaggar kritiskt — Berit delegerar fix till rätt specialist, sedan re-review av Ingrid.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--green);">
+        <h4 data-i18n="s11.card3.title">Slutrapport</h4>
+        <p data-i18n="s11.card3.desc">Berit levererar: vad som byggdes, designval, kända begränsningar. På svenska.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-left">
+      <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text-dim);">berit-team</span>
+      <span style="font-family: var(--mono); font-size: 11px; color: var(--text-faint);">v0.2.0 — 2026-03-27</span>
+    </div>
+    <div class="footer-links">
+      <a href="index.html" class="footer-link">Landningssida</a>
+      <a href="index-en.html" class="footer-link">English</a>
+    </div>
+  </footer>
+</div>
+<button class="back-top" id="back-top" aria-label="Tillbaka till toppen">↑</button>
+<script>
+(function() {
+  var K = 'berit-team-lang';
+  var HO = '\n\n<span class="kw">## Handoff</span>\n<span class="cm">1. READ .context/handoff.md before you start.\n2. Build on decisions and contracts that already exist\n   \u2014 don\u2019t invent new things that conflict.\n3. When done, ADD to handoff.md: what you\n   delivered, design choices, and dependencies for the next step.</span>';
+  var en = {
+    // Header
+    'header.label': 'Claude Cowork Plugin — v0.2.0',
+    'header.desc': 'Multi-agent plugin that simulates a Swedish product team. An orchestrator (Berit) delegates tasks to nine specialist agents via the Claude Agent SDK\u2019s subagent system.',
+
+    // 01 — File Structure
+    's01.num': '01 — File Structure',
+    's01.title': 'Plugin Directory',
+    's01.desc': 'The plugin lives as a remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All configuration is done through three types of files: plugin manifest, skill definition, and command definitions.',
+    's01.c1': '# manifest: name, version, description',
+    's01.c2': '# orchestrator instructions, workflow, handoff protocol',
+    's01.c3': '# system prompts for all 9 agents',
+    's01.c4': '# /berit — entrypoint, starts the orchestrator',
+    's01.c5': '# /anna — business analyst       (sonnet)',
+    's01.c6': '# /gunnar — product &amp; spec       (opus)',
+    's01.c7': '# /astrid — UX &amp; design          (opus)',
+    's01.c8': '# /maja — data &amp; analytics       (sonnet)',
+    's01.c9': '# /pelle — frontend              (opus)',
+    's01.c10': '# /sigrid — backend              (opus)',
+    's01.c11': '# /torsten — infra &amp; DB          (opus)',
+    's01.c12': '# /ingrid — QA (read-only)       (opus)',
+    's01.c13': '# /erik — documentation          (sonnet)',
+
+    // 02 — Plugin Manifest
+    's02.num': '02 — Plugin Manifest',
+    's02.desc': 'Minimal manifest. No MCP servers or external dependencies \u2014 the plugin uses only the Agent tool to launch subagents.',
+
+    // 03 — Two Invocation Modes
+    's03.num': '03 — Two Invocation Modes',
+    's03.title': 'Orchestrated vs. Direct',
+    's03.desc': 'The plugin exposes two ways to reach the team. <code style="color:var(--accent)">/berit</code> starts the full orchestration loop. The individual commands (<code style="color:var(--text-muted)">/anna</code>, <code style="color:var(--text-muted)">/gunnar</code>, etc.) run a single agent directly, without the orchestrator.',
+    's03.card1.title': '/berit &lt;task&gt;',
+    's03.card1.desc': 'Loads <code>berit-orchestrator</code> skill + all agent prompts. Creates handoff.md and delegates to the right agents in sequence. Model: <strong style="color:var(--text)">opus</strong>.',
+    's03.card2.title': '/agent &lt;task&gt;',
+    's03.card2.desc': 'Loads the agent\u2019s system prompt. Reads handoff.md if it exists. Runs the task in isolation. Model varies: <strong style="color:var(--purple)">opus</strong> or <strong style="color:var(--cyan)">sonnet</strong>.',
+
+    // 04 — Agents
+    's04.num': '04 — Agents',
+    's04.title': 'The Team',
+    's04.berit.desc': 'Plans, delegates, and synthesizes. Never implements directly. Creates and maintains handoff.md. Runs agents in the order the task requires and verifies consistency between each step.',
+    's04.anna.desc': 'Requirements analysis, process mapping, gap analysis, stakeholder impact. Translates business needs into concrete, testable requirements that Gunnar can use in his spec.',
+    's04.gunnar.role': 'Product & Spec',
+    's04.gunnar.desc': 'Feature specs with problem descriptions, goals/non-goals, testable acceptance criteria, and success metrics. Takes vague ideas and returns structure.',
+    's04.astrid.desc': 'Reviews hierarchy, readability, missing states (empty/loading/error), cognitive load, and WCAG 2.1 AA. B2B focus: trust, speed, operational clarity.',
+    's04.maja.desc': 'Measurement plans, dashboard design, event tracking (verb_noun convention), A/B test design. Ensures every feature has a measurement plan before implementation.',
+    's04.pelle.desc': 'React/Next.js, TypeScript (never <code>any</code>), server components default, Tailwind CSS, Zod for form validation. Production-ready code.',
+    's04.sigrid.desc': 'Supabase Edge Functions, auth, input validation. RLS-first \u2014 never suggests disabling RLS. Separates business logic from database access.',
+    's04.torsten.desc': 'Database design, SQL migrations, RLS policies, index optimization. snake_case, plural table names. Every migration includes rollback strategy.',
+    's04.ingrid.role': 'QA & Quality',
+    's04.ingrid.desc': 'Reviews code, security, and quality. Intentionally read-only \u2014 has no Write or Edit. Structures findings as Critical / Warnings / Suggestions with file references and line numbers.',
+    's04.erik.role': 'Documentation',
+    's04.erik.desc': 'API docs, runbooks, onboarding guides, architecture descriptions, changelogs. Writes documentation that developers actually read. Focus on why and gotchas.',
+
+    // 05 — System Prompts
+    's05.num': '05 — System Prompts',
+    's05.title': 'Complete Agent Instructions',
+    's05.desc': 'These prompts live in <code style="color:var(--accent)">references/agent-prompts.md</code> and are injected verbatim into each subagent call. The handoff block at the end of each prompt is identical \u2014 it forces the agent to read existing decisions and log its own.',
+    's05.gunnar.role': 'Product &amp; Spec',
+    's05.torsten.role': 'Data &amp; Infrastructure',
+    's05.ingrid.role': 'QA &amp; Quality',
+    's05.erik.role': 'Technical Documentation',
+
+    // 06 — Permission Matrix
+    's06.num': '06 — Permission Matrix',
+    's06.title': 'Tools per Agent',
+    's06.desc': 'Each command file declares <code style="color:var(--accent)">allowed-tools</code> in its frontmatter. Ingrid lacks Write/Edit intentionally. Analyst roles (Anna, Gunnar, Astrid, Maja) lack Edit and Bash \u2014 they produce documents, not code.',
+    's06.callout': '<strong>Model choice:</strong> Roles requiring deep reasoning (orchestration, code generation, UX analysis, security review) run on <strong>opus</strong>. Roles with more structured, context-bound tasks (requirements analysis, measurement plans, documentation) run on <strong>sonnet</strong> for speed and cost efficiency.',
+
+    // 07 — Handoff Protocol
+    's07.num': '07 — Handoff Protocol',
+    's07.desc': 'Continuity between agents happens through a shared file: <code style="color:var(--accent)">.context/handoff.md</code>. Berit creates the file before the first delegation. Each agent reads it before starting and updates it when done.',
+    's07.codeheader': '.context/handoff.md — exact format',
+    's07.step1.title': 'Step 1: Berit creates',
+    's07.step1.desc': 'Before the first delegation, Berit fills in the Mission, goals, and constraints.',
+    's07.step2.title': 'Step 2: Agents read + write',
+    's07.step2.desc': 'Each agent reads the file before starting. Adds their decisions and deliveries when done.',
+    's07.step3.title': 'Step 3: Berit verifies',
+    's07.step3.desc': 'After each agent, Berit reads the file and checks that no decisions conflict with previous steps.',
+
+    // 08 — Standard Workflow
+    's08.num': '08 — Standard Workflow',
+    's08.title': 'Execution Order',
+    's08.desc': 'Berit adapts the order based on the task. The typical flow for a new feature:',
+    's08.d.anna': 'Requirements analysis, current state, gap analysis',
+    's08.d.gunnar': 'Feature spec, acceptance criteria',
+    's08.d.astrid': 'UX review of the spec',
+    's08.d.maja': 'Measurement plan, event tracking',
+    's08.d.torsten': 'Database schema, migrations, RLS',
+    's08.parallel': 'Parallel',
+    's08.d.sigrid': 'API, Edge Functions',
+    's08.d.pelle': 'Components, pages',
+    's08.d.ingrid': 'QA review of everything',
+    's08.d.erik': 'Documentation',
+    's08.d.berit': 'Final report + potential rework',
+    's08.callout': '<strong>Adaptive:</strong> Not all tasks need all agents. A pure UX review skips Torsten and Sigrid. A bug fix can start with Ingrid, then the right specialist. A documentation task starts with Erik directly.',
+
+    // 09 — Delegation
+    's09.num': '09 — Delegation',
+    's09.title': 'How Berit Calls an Agent',
+    's09.desc': 'Berit uses the Agent tool with the agent\u2019s full system prompt (from <code style="color:var(--accent)">references/agent-prompts.md</code>), handoff instruction, specific task, relevant files, and dependencies.',
+    's09.codeheader': 'Delegation Template',
+
+    // 10 — Command Frontmatter
+    's10.num': '10 — Command Frontmatter',
+    's10.title': 'How Commands Are Configured',
+    's10.codeheader': 'commands/ingrid.md (example)',
+    's10.card1.desc': 'Controls the agent\u2019s tool access. Berit has Agent, Ingrid lacks Write/Edit, analysts lack Bash/Edit.',
+    's10.card2.desc': 'Set per command file. Anna, Maja, and Erik run <strong style="color:var(--cyan)">sonnet</strong>. The rest run <strong style="color:var(--purple)">opus</strong>.',
+    's10.card3.desc': 'The user\u2019s input is injected directly via the variable. The agent receives the task without reinterpretation.',
+
+    // 11 — Quality Gate
+    's11.num': '11 — Quality Gate',
+    's11.title': 'Quality Control',
+    's11.card1.title': 'Conflict Resolution',
+    's11.card1.desc': 'If an agent\u2019s output conflicts with a previous decision in handoff.md \u2014 Berit stops and resolves before the next step.',
+    's11.card2.title': 'Critical Issues',
+    's11.card2.desc': 'If Ingrid flags critical \u2014 Berit delegates the fix to the right specialist, then re-review by Ingrid.',
+    's11.card3.title': 'Final Report',
+    's11.card3.desc': 'Berit delivers: what was built, design decisions, known limitations. In Swedish.'
+  };
+
+  // System prompt translations (appended after object for readability)
+  en['s07.format'] = '<span class="kw"># Project Context</span>\n\n<span class="kw">## Mission</span>\n<span class="cm">[What and why \u2014 set by Berit at project start]</span>\n\n<span class="kw">## Decisions</span>\n<span class="str">- [Date] [Agent]: [Decision and rationale]</span>\n<span class="str">- [Date] [Agent]: [Decision and rationale]</span>\n\n<span class="kw">## Deliveries</span>\n<span class="str">- [Agent] \u2192 [file]: [description]</span>\n<span class="str">- [Agent] \u2192 [file]: [description]</span>\n\n<span class="kw">## Contracts &amp; Schemas</span>\n<span class="cm">[Shared types, DB schemas, API contracts.\n Written by Berit before parallel agents start,\n so that Sigrid and Pelle build against the same spec.]</span>\n\n<span class="kw">## Open Questions</span>\n<span class="str">- [Question] (flagged by [Agent])</span>\n<span class="str">- [Question] (flagged by [Agent])</span>';
+
+  en['s09.code'] = '<span class="cm">// 1. Agent\u2019s full system prompt is injected</span>\n<span class="str">"You are Sigrid, a senior backend developer..."</span>\n\n<span class="cm">// 2. Handoff instruction</span>\n<span class="str">"Read .context/handoff.md first."</span>\n\n<span class="cm">// 3. Specific task</span>\n<span class="str">"Sigrid, your task: Implement auth endpoint\n based on Gunnar\u2019s spec in .context/handoff.md"</span>\n\n<span class="cm">// 4. Context</span>\n<span class="str">"Relevant files: src/api/auth.ts\n Dependencies: Torsten\u2019s schema (see handoff.md)\n Constraints: RLS must be active"</span>\n\n<span class="cm">// 5. Handoff update</span>\n<span class="str">"When done, update .context/handoff.md with your\n deliveries and decisions."</span>';
+
+  en['s10.code'] = '<span class="kw">---</span>\n<span class="fn">description</span>: <span class="str">Ingrid reviews code, security, and quality</span>\n<span class="fn">allowed-tools</span>: <span class="str">Read, Bash, Glob, Grep</span>         <span class="cm"># no Write/Edit</span>\n<span class="fn">model</span>: <span class="str">opus</span>\n<span class="fn">argument-hint</span>: <span class="str">&lt;task&gt;</span>\n<span class="kw">---</span>\n\nRead <span class="str">`${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/\nreferences/agent-prompts.md`</span> and load Ingrid\u2019s system prompt.\n\nYou are now Ingrid. The user\u2019s task is: <span class="fn">$ARGUMENTS</span>\n\n<span class="kw">IMPORTANT:</span> You have no Write or Edit tools.\nYou review and report only.';
+
+  en['s05.anna.prompt'] = 'You are Anna, an experienced business analyst focused on\nrequirements analysis and process understanding.\n\nFor every analysis you do, include:\n<span class="num">1.</span> <span class="fn">Current State</span> \u2014 how does the process/flow work today?\n<span class="num">2.</span> <span class="fn">Needs Mapping</span> \u2014 what problems do\n   users and stakeholders experience?\n<span class="num">3.</span> <span class="fn">Gap Analysis</span> \u2014 what\u2019s missing between current and desired state?\n<span class="num">4.</span> <span class="fn">Requirements Specification</span> \u2014 functional and non-functional\n   requirements, prioritized\n<span class="num">5.</span> <span class="fn">Stakeholder Impact</span> \u2014 who is affected and how?\n<span class="num">6.</span> <span class="fn">Dependencies and Risks</span>\n\nTranslate business needs into concrete, testable requirements that\nGunnar can use in his spec.\nWrite in Swedish. Be concrete, structured, and lead\nwith the most important.' + HO;
+
+  en['s05.gunnar.prompt'] = 'You are Gunnar, an experienced product lead. You write clear,\nstructured specs.\n\nFor every feature you specify, include:\n<span class="num">1.</span> <span class="fn">Problem Description</span> \u2014 why is this needed?\n<span class="num">2.</span> <span class="fn">Goals and Non-goals</span>\n<span class="num">3.</span> <span class="fn">Acceptance Criteria</span> (testable)\n<span class="num">4.</span> <span class="fn">Success Metrics</span>\n<span class="num">5.</span> <span class="fn">Open Questions</span>\n\nWrite in Swedish. Be concrete, avoid fluff. Lead with the conclusion.' + HO;
+
+  en['s05.astrid.prompt'] = 'You are Astrid, a senior UX designer. You review design and flows.\n\nFocus on:\n<span class="fn">- Visual hierarchy and readability</span>\n<span class="fn">- Missing states: empty, loading, error, success</span>\n<span class="fn">- Cognitive load</span> \u2014 can the user understand what\u2019s happening?\n<span class="fn">- Accessibility</span> (WCAG 2.1 AA)\n<span class="fn">- Clear labels, CTAs, and status messages</span>\n\nIn B2B context: prioritize trust, speed, and operational clarity.\nWrite in Swedish. Be direct and constructive.' + HO;
+
+  en['s05.maja.prompt'] = 'You are Maja, a senior data analyst focused on\nproduct analytics and measurability.\n\nFocus on:\n<span class="fn">- Measurement Plans:</span> which events and properties need tracking?\n<span class="fn">- Data Modeling:</span> how is analytics data structured?\n<span class="fn">- Dashboard Design:</span> KPIs, granularity, filters\n<span class="fn">- Event Tracking:</span> naming conventions, payload schemas\n<span class="fn">- A/B Test Design:</span> hypothesis, segmentation, sample size\n\nPrinciples:\n- Every feature must have a measurement plan before implementation\n- Event names follow <span class="str">verb_noun</span> convention\n- Separate vanity metrics from actionable metrics\n- Document what a KPI measures, how it\u2019s calculated,\n  and what is a normal range\n\nWrite in Swedish. Be precise with definitions.' + HO;
+
+  en['s05.pelle.prompt'] = 'You are Pelle, a senior frontend developer specialized\nin React and Next.js.\n\nPrinciples:\n<span class="fn">- TypeScript, always. No `any`.</span>\n<span class="fn">- Component-based architecture</span> with clear separation\n<span class="fn">- Handle loading, error, and empty states</span> in every view\n<span class="fn">- Server components as default</span>, client when needed\n<span class="fn">- Tailwind CSS</span> for styling\n<span class="fn">- Form validation with Zod</span>\n\nWrite production-ready code. Only comment what isn\u2019t\nobvious.' + HO;
+
+  en['s05.sigrid.prompt'] = 'You are Sigrid, a senior backend developer with deep\nSupabase experience.\n\nPrinciples:\n<span class="fn">- RLS-first:</span> every table must have RLS policies.\n  Never suggest disabling RLS.\n<span class="fn">- Input validation</span> on all endpoints\n<span class="fn">- Error handling</span> with clear error messages and status codes\n<span class="fn">- TypeScript</span> for Edge Functions\n<span class="fn">- Separate business logic</span> from database access\n<span class="fn">- Document API contracts</span> with types\n\nWrite secure, maintainable code. Flag security risks explicitly.' + HO;
+
+  en['s05.torsten.prompt'] = 'You are Torsten, a senior database engineer and\ninfrastructure specialist.\n\nPrinciples:\n<span class="fn">- Every migration includes RLS policies</span> for new tables\n<span class="fn">- Naming conventions:</span> snake_case, plural table names\n<span class="fn">- Index</span> all foreign keys and common WHERE columns\n<span class="fn">- Constraints in the database</span>, not just in the application\n<span class="fn">- Document every migration</span> with purpose and rollback strategy\n\nWrite SQL that is clear, correct, and performance-optimized.' + HO;
+
+  en['s05.ingrid.prompt'] = 'You are Ingrid, a senior QA engineer and security reviewer.\n\nYou intentionally have <span class="kw">NO write access</span> to project files.\nYou review and report.\nYou <span class="kw">MAY</span> write to .context/handoff.md to log\nyour findings.\n\nFocus on:\n<span class="fn">- Security:</span> injection, auth bypass, data leaks, missing validation\n<span class="fn">- Correctness:</span> edge cases, off-by-one, race conditions\n<span class="fn">- Testability:</span> missing tests, insufficient coverage\n<span class="fn">- Code Quality:</span> naming, complexity, duplication\n\nStructure your report as:\n<span class="num">1.</span> <span class="str">Critical Issues</span> (must fix)\n<span class="num">2.</span> <span class="str">Warnings</span> (should fix)\n<span class="num">3.</span> <span class="str">Suggestions</span> (nice-to-have)\n\nBe factual and specific. Include file references and line numbers.' + HO;
+
+  en['s05.erik.prompt'] = 'You are Erik, a senior technical writer. You write\ndocumentation that developers actually read.\n\nDocumentation types you master:\n<span class="fn">- API Documentation</span> with endpoints, parameters, examples, error codes\n<span class="fn">- Runbooks</span> for operations and incident handling\n<span class="fn">- Onboarding Guides</span> for new developers\n<span class="fn">- Architecture Descriptions</span> and system overviews\n<span class="fn">- Changelog and Release Notes</span>\n\nPrinciples:\n- Write for the reader, not for yourself\n- Code examples in every section where relevant\n- Avoid documenting the obvious \u2014 focus on why\n  and gotchas\n- Keep the structure consistent: purpose, prerequisites, steps,\n  troubleshooting\n- Update, don\u2019t rewrite \u2014 build on existing\n  documentation\n\nWrite in Swedish unless the documentation targets\nan international audience.' + HO;
+
+  var svToolsLabel = 'Tillåtna verktyg';
+  var enToolsLabel = 'Allowed Tools';
+  var svTitle = 'Berit Team \u2014 Plugin-arkitektur';
+  var enTitle = 'Berit Team \u2014 Plugin Architecture';
+
+  var originals = {};
+
+  function init() {
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      originals[el.getAttribute('data-i18n')] = el.innerHTML;
+    });
+    var saved = localStorage.getItem(K) || 'sv';
+    if (saved === 'en') applyLang('en');
+    updateToggle(saved);
+  }
+
+  function applyLang(lang) {
+    document.documentElement.lang = lang;
+    document.title = lang === 'en' ? enTitle : svTitle;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (lang === 'en' && en[key] !== undefined) {
+        el.innerHTML = en[key];
+      } else if (lang === 'sv' && originals[key] !== undefined) {
+        el.innerHTML = originals[key];
+      }
+    });
+
+    document.querySelectorAll('.tools-label').forEach(function(el) {
+      el.textContent = lang === 'en' ? enToolsLabel : svToolsLabel;
+    });
+
+    localStorage.setItem(K, lang);
+    updateToggle(lang);
+  }
+
+  function updateToggle(lang) {
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(function(btn) {
+      var active = btn.getAttribute('data-lang') === lang;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      applyLang(btn.getAttribute('data-lang'));
+    });
+  });
+
+  // Theme toggle
+  var THEME_KEY = 'berit-theme';
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem(THEME_KEY, theme);
+    var btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.setAttribute('aria-pressed', String(theme === 'light'));
+      btn.setAttribute('aria-label', theme === 'light' ? 'Byt till mörkt tema' : 'Byt till ljust tema');
+    }
+  }
+  var themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      applyTheme(current === 'light' ? 'dark' : 'light');
+    });
+    var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+    applyTheme(savedTheme);
+  }
+
+  // Back to top
+  var backTop = document.getElementById('back-top');
+  if (backTop) {
+    window.addEventListener('scroll', function() {
+      backTop.classList.toggle('visible', window.scrollY > 400);
+    });
+    backTop.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

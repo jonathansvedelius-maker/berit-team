@@ -1,0 +1,10 @@
+export { anna } from "./anna.js";
+export { astrid } from "./astrid.js";
+export { berit } from "./berit.js";
+export { erik } from "./erik.js";
+export { gunnar } from "./gunnar.js";
+export { ingrid } from "./ingrid.js";
+export { maja } from "./maja.js";
+export { pelle } from "./pelle.js";
+export { sigrid } from "./sigrid.js";
+export { torsten } from "./torsten.js";

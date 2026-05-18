@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berit-teamet — Svenskt AI-produktteam</title>
+  <meta name="description" content="Nio AI-specialister. En orchestrator. Byggt för produktteam som vill delegera till verkliga agenter — inte bara prompta.">
+  <meta property="og:title" content="Berit-teamet — Svenskt AI-produktteam">
+  <meta property="og:description" content="Nio AI-specialister. En orchestrator. Byggt för produktteam som vill delegera till verkliga agenter — inte bara prompta.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="sv-dark-hero.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Berit-teamet — Svenskt AI-produktteam">
+  <meta name="twitter:description" content="Nio AI-specialister. En orchestrator. Byggt för produktteam som vill delegera till verkliga agenter — inte bara prompta.">
+  <meta name="twitter:image" content="sv-dark-hero.png">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('berit-theme');
+        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = stored || (prefersLight ? 'light' : 'dark');
+        if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #070707;
+      --bg-card:     #0d0d0d;
+      --bg-raised:   #111111;
+      --bg-deep:     #050505;
+      --bg-code:     #0a0a0a;
+      --nav-bg:      rgba(7,7,7,0.82);
+      --border:      rgba(255,255,255,0.07);
+      --border-hi:   rgba(200,169,110,0.3);
+      --text:        #ede9e1;
+      --text-dim:    #888;
+      --text-faint:  #7a7a72;
+      --text-mute:   #7a7a72;
+      --accent:      #c8a96e;
+      --accent-dim:  rgba(200,169,110,0.15);
+      --accent-glow: rgba(200,169,110,0.06);
+      --accent-fg:   #000;
+      --red:         #e05a5a;
+      --green:       #5ab878;
+      --blue:        #5a8fe0;
+      --shadow-accent: 0 0 12px rgba(200,169,110,0.4);
+      --noise-opacity: 0.03;
+      --mono:        'JetBrains Mono', ui-monospace, monospace;
+      --mono-alt:    'Geist Mono', ui-monospace, monospace;
+      --sans:        'Geist', system-ui, -apple-system, sans-serif;
+      --display:     'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    [data-theme="light"] {
+      --bg:          #faf7f1;
+      --bg-card:     #f2eee5;
+      --bg-raised:   #ece7db;
+      --bg-deep:     #e6e1d4;
+      --bg-code:     #f0ebdf;
+      --nav-bg:      rgba(250,247,241,0.88);
+      --border:      rgba(0,0,0,0.09);
+      --border-hi:   rgba(140,108,48,0.45);
+      --text:        #1a1713;
+      --text-dim:    #5a554c;
+      --text-faint:  #6b6560;
+      --text-mute:   #8c877c;
+      --accent:      #8c6c30;
+      --accent-dim:  rgba(140,108,48,0.14);
+      --accent-glow: rgba(140,108,48,0.1);
+      --accent-fg:   #faf7f1;
+      --red:         #b24545;
+      --green:       #3d8858;
+      --blue:        #3966b3;
+      --shadow-accent: 0 0 12px rgba(140,108,48,0.25);
+      --noise-opacity: 0.02;
+    }
+
+    html { color-scheme: dark; }
+    [data-theme="light"] { color-scheme: light; }
+
+    body {
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: var(--noise-opacity);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: var(--nav-bg);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo::before { content: '['; color: var(--accent); margin-right: 2px; }
+    .nav-logo::after  { content: ']'; color: var(--accent); margin-left: 2px; }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lang-switch {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .lang-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 5px 10px;
+      letter-spacing: 0.05em;
+      transition: background 0.15s, color 0.15s;
+      display: inline-block;
+    }
+    .lang-btn.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .lang-btn:not(.active):hover {
+      color: var(--text);
+      background: var(--bg-raised);
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 8px;
+      background: var(--bg-card);
+      color: var(--accent);
+      padding: 8px 16px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 12px;
+      text-decoration: none;
+      z-index: 9998;
+      transition: top 0.1s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-faint);
+      cursor: pointer;
+      padding: 3px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: var(--border-hi); }
+    .copy-btn.copied { color: var(--green); border-color: rgba(90,184,120,0.3); }
+    .code-header { flex: 1; }
+    .code-header-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+      gap: 8px;
+    }
+
+    /* ── Back to top ── */
+    .back-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
+      z-index: 50;
+    }
+    .back-top.visible { opacity: 1; transform: translateY(0); }
+    .back-top:hover { color: var(--accent); border-color: var(--border-hi); }
+
+    /* ── Footer links ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left { display: flex; flex-direction: column; gap: 4px; }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+    .footer-link {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0;
+    }
+    .footer-link:hover { color: var(--text-dim); }
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--border-hi); color: var(--accent); }
+    .theme-toggle svg { width: 14px; height: 14px; display: block; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    .nav-cta {
+      background: var(--accent);
+      color: var(--accent-fg);
+      padding: 8px 16px;
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-orb {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-hi);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(56px, 10vw, 132px);
+      font-weight: 200;
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      color: var(--text);
+      animation: fadeUp 0.8s 0.1s ease both;
+      margin-bottom: 32px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 200;
+    }
+    .hero h1::after {
+      content: '_';
+      color: var(--accent);
+      margin-left: 4px;
+      animation: blink 2s steps(1) infinite;
+    }
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      55%, 100% { opacity: 0; }
+    }
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      animation: fadeUp 0.8s 0.2s ease both;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-fg);
+      padding: 12px 28px;
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 400;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      padding: 12px 28px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 13px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-top: 80px;
+      animation: fadeUp 0.8s 0.4s ease both;
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-n {
+      font-family: var(--display);
+      font-size: 38px;
+      font-weight: 200;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .hero-stat-l {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* ── Sections ── */
+    section { padding: 120px 48px; max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(34px, 4.4vw, 56px);
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    h2 strong { font-weight: 400; color: var(--accent); }
+    .section-intro {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Reveal animation ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Skills vs Agents ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 64px;
+      border: 1px solid var(--border);
+    }
+    .compare-card {
+      background: var(--bg-card);
+      padding: 48px;
+    }
+    .compare-card:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .compare-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .badge-skill { background: rgba(90,143,224,0.15); color: #5a8fe0; border: 1px solid rgba(90,143,224,0.2); }
+    .badge-agent { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid var(--border-hi); }
+    .compare-card h3 {
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .compare-card p {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .compare-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .compare-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .compare-list li::before {
+      content: '→';
+      color: var(--accent);
+      font-family: var(--mono);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .compare-cmd {
+      margin-top: 32px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .compare-cmd span { color: var(--text-dim); }
+
+    /* ── Team grid ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 64px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .team-card {
+      background: var(--bg);
+      padding: 32px 24px;
+      transition: background 0.25s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .team-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .team-card:hover { background: var(--bg-card); }
+    .team-card:hover::after { opacity: 1; }
+    .team-card.orchestrator {
+      grid-column: 1 / -1;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-hi);
+    }
+    .team-name {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .team-name::before { content: '['; color: var(--accent); opacity: 0.6; margin-right: 1px; }
+    .team-name::after  { content: ']'; color: var(--accent); opacity: 0.6; margin-left: 1px; }
+    .team-role {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .team-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .team-model {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--text-faint);
+      letter-spacing: 0;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .team-model.opus { border-color: rgba(200,169,110,0.2); color: var(--accent); }
+    .team-model.sonnet { border-color: rgba(90,143,224,0.2); color: #5a8fe0; }
+
+    /* ── Prompts (collapsible system prompts) ── */
+    .prompts-list {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .prompt-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .prompt-block[open] { border-color: var(--border-hi); }
+    .prompt-block summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .prompt-block summary::-webkit-details-marker { display: none; }
+    .prompt-block summary:hover { background: var(--bg-raised); }
+    .prompt-name {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .prompt-name::before { content: '['; color: var(--accent); margin-right: 1px; }
+    .prompt-name::after  { content: ']'; color: var(--accent); margin-left: 1px; }
+    .prompt-role {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: -0.005em;
+    }
+    .prompt-model {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      letter-spacing: 0;
+    }
+    .prompt-model.opus { color: var(--accent); border-color: rgba(200,169,110,0.25); }
+    .prompt-model.sonnet { color: #5a8fe0; border-color: rgba(90,143,224,0.25); }
+    .prompt-tools {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .prompt-tools-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .tool-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      letter-spacing: 0;
+    }
+    .tool-tag.danger {
+      color: var(--red);
+      border-color: rgba(224,90,90,0.2);
+      background: rgba(224,90,90,0.05);
+    }
+    .prompt-toggle {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text-faint);
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .prompt-block[open] .prompt-toggle::before { content: '−'; color: var(--accent); }
+    .prompt-block:not([open]) .prompt-toggle::before { content: '+'; }
+    .prompt-body {
+      border-top: 1px solid var(--border);
+      background: var(--bg-deep);
+    }
+    .prompt-pre {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      padding: 24px 28px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-x: auto;
+      margin: 0;
+      tab-size: 2;
+    }
+    .prompt-pre .pp-h    { color: var(--accent); font-weight: 500; }
+    .prompt-pre .pp-bold { color: var(--text); font-weight: 500; }
+    .prompt-pre .pp-kw   { color: var(--red); }
+    .prompt-pre .pp-num  { color: #5a8fe0; }
+    .prompt-pre .pp-str  { color: #5ab878; }
+    .prompt-pre .pp-com  { color: var(--text-faint); }
+
+    /* ── Workflow ── */
+    .workflow-wrap {
+      margin-top: 64px;
+      position: relative;
+    }
+    .workflow-line {
+      position: absolute;
+      left: 32px;
+      top: 24px;
+      bottom: 24px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .workflow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .workflow-step:last-child { border-bottom: none; }
+    .workflow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+      box-shadow: var(--shadow-accent);
+    }
+    .workflow-dot.dim { background: var(--text-faint); box-shadow: none; }
+    .workflow-content { flex: 1; }
+    .workflow-who {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .workflow-task {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .workflow-output {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+    .workflow-parallel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .workflow-parallel-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 2px;
+    }
+    .workflow-parallel-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .workflow-parallel-task {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ── Usage ── */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 64px;
+    }
+    .usage-block h3 {
+      font-family: var(--sans);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .usage-block p {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .code-block {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .code-header-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .code-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .code-body {
+      padding: 20px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .c-comment { color: var(--text-mute); }
+    .c-cmd     { color: var(--accent); }
+    .c-str     { color: #5ab878; }
+    .c-kw      { color: #5a8fe0; }
+    .c-dim     { color: var(--text-dim); }
+    .c-name    { color: var(--text); }
+
+    /* ── Examples ── */
+    .examples-list {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .example-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .example-row:hover { border-color: var(--border-hi); }
+    .example-cmd {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--accent);
+      flex: 1;
+    }
+    .example-cmd span { color: var(--text-dim); }
+    .example-who {
+      font-family: var(--mono-alt);
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Handoff ── */
+    .handoff-visual {
+      margin-top: 48px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .handoff-header {
+      background: var(--bg-raised);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .handoff-header::before { content: '📄'; font-size: 14px; }
+    .handoff-body {
+      padding: 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.9;
+      color: var(--text-dim);
+    }
+    .hf-key { color: var(--accent); }
+    .hf-val { color: var(--text); }
+    .hf-section { color: var(--text-dim); margin-top: 12px; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 160px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 800px 400px at 50% 100%, var(--accent-glow) 0%, transparent 70%);
+    }
+    .cta-section h2 {
+      font-size: clamp(40px, 6vw, 80px);
+      margin-bottom: 24px;
+    }
+    .cta-section p {
+      font-size: 17px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+
+    /* ── Footer ── */
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: -0.01em;
+    }
+    .footer-logo::before { content: '['; color: var(--accent); margin-right: 2px; }
+    .footer-logo::after  { content: ']'; color: var(--accent); margin-left: 2px; }
+    .footer-note {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-family: var(--mono);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section { padding: 80px 24px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-card:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-card.orchestrator { grid-column: 1 / -1; }
+      .usage-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .team-card.orchestrator { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="#top" class="skip-link">Hoppa till huvudinnehåll</a>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">berit</a>
+  <ul class="nav-links">
+    <li><a href="#concept">arkitektur</a></li>
+    <li><a href="#teamet">teamet</a></li>
+    <li><a href="#instruktioner">prompts</a></li>
+    <li><a href="#flödet">flödet</a></li>
+    <li><a href="#anropa">anropa</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-switch" role="group" aria-label="Välj språk">
+      <span class="lang-btn active" aria-current="true">SV</span>
+      <a href="index-en.html" class="lang-btn">EN</a>
+    </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Byt till ljust tema" aria-pressed="false" title="Växla tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    </button>
+    <a href="#anropa" class="nav-cta">kom igång</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-orb"></div>
+  <div class="hero-tag">claude-opus-4-7 · agent sdk v0.2.114</div>
+  <h1>berit<em>·</em>teamet</h1>
+  <p class="hero-sub">
+    Nio AI-specialister. En orchestrator. Byggt för produktteam som vill delegera
+    till verkliga agenter — inte bara prompta.
+  </p>
+  <div class="hero-actions">
+    <a href="#anropa" class="btn-primary">Kom igång →</a>
+    <a href="arkitektur.html" class="btn-secondary">Läs om arkitekturen</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n">9</div>
+      <div class="hero-stat-l">Specialister</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">2</div>
+      <div class="hero-stat-l">Modeller</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">$0.70</div>
+      <div class="hero-stat-l">Per uppdrag</div>
+    </div>
+    <div class="hero-stat" title="Ärver din befintliga Claude Code-auth — ingen separat Anthropic-nyckel krävs">
+      <div class="hero-stat-n">0</div>
+      <div class="hero-stat-l">API-nycklar krävs</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONCEPT: SKILLS VS AGENTS -->
+<section id="concept">
+  <div class="section-label reveal">Arkitektur</div>
+  <h2 class="reveal reveal-d1">skills <strong>vs</strong><br>riktiga agenter</h2>
+  <p class="section-intro reveal reveal-d2">
+    Berit-teamet kan användas på två sätt — beroende på om du arbetar
+    interaktivt i Claude Code eller vill köra teamet automatiserat i en pipeline.
+  </p>
+
+  <div class="compare-grid reveal reveal-d3">
+    <div class="compare-card">
+      <div class="compare-badge badge-skill">Skills / Claude Code</div>
+      <h3>Samtalsbaserade agenter</h3>
+      <p>
+        Skills är markdown-filer som laddas in i din pågående konversation.
+        Slash-kommandot <code>/berit-team:berit</code> aktiverar Berits persona
+        och instruktioner direkt i sessionen — utan egna processer.
+      </p>
+      <ul class="compare-list">
+        <li>Körs i samma Claude Code-session som du arbetar i</li>
+        <li>Delar konversationshistorik och kontext</li>
+        <li>Ingen API-nyckel eller extra installation krävs</li>
+        <li>Bäst för interaktivt, iterativt arbete</li>
+        <li>Agenter spawnas som isolerade subprocess via Agent-verktyget</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit Bygg en faktura-modul
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-badge badge-agent">Agent SDK · TypeScript</div>
+      <h3>Processisolerade agenter</h3>
+      <p>
+        SDK-appen kör Berit som en fristående Node.js-process via
+        <code>@anthropic-ai/claude-agent-sdk</code>. Varje subagent är
+        helt isolerad — egna verktyg, modell och behörigheter.
+      </p>
+      <ul class="compare-list">
+        <li>Kör utanför Claude Code — perfekt för CI/CD och pipelines</li>
+        <li>Programmatisk kontroll via TypeScript</li>
+        <li>Ärver din befintliga <code>claude</code>-binärs auth</li>
+        <li>Bäst för automatisering och schemalagda jobb</li>
+        <li>Kostnad synlig: <code>$0.70–2.00</code> per fullständigt uppdrag</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>npm start -- "Granska auth-flödet"
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TEAMET -->
+<section id="teamet">
+  <div class="section-label reveal">Specialister</div>
+  <h2 class="reveal reveal-d1">möt <strong>teamet</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Varje specialist har sin roll, sin modell och sina verktyg.
+    Berit orchestrerar — de levererar.
+  </p>
+
+  <div class="team-grid reveal reveal-d3">
+    <a class="team-card orchestrator" href="#prompt-berit">
+      <div class="team-name">Berit</div>
+      <div class="team-role">Orchestrator</div>
+      <div class="team-desc">
+        Planerar, delegerar och syntetiserar. Skapar handoff-protokollet,
+        verifierar att inget krockar mellan agenter, och levererar slutrapporten.
+        Implementerar aldrig direkt.
+      </div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-anna">
+      <div class="team-name">Anna</div>
+      <div class="team-role">Krav & Affärsanalys</div>
+      <div class="team-desc">Kravanalys, gap-analys, intressentpåverkan. Översätter affärsbehov till testbara krav.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</div>
+    </a>
+
+    <a class="team-card" href="#prompt-gunnar">
+      <div class="team-name">Gunnar</div>
+      <div class="team-role">Produkt & Spec</div>
+      <div class="team-desc">Feature specs, acceptanskriterier, prioritering. Tar vaga idéer och returnerar strukturerade specs.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-astrid">
+      <div class="team-name">Astrid</div>
+      <div class="team-role">UX & Design</div>
+      <div class="team-desc">UX-granskning, tillgänglighetsaudit, designkritik. WCAG 2.1 AA. Flaggar saknade states.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-maja">
+      <div class="team-name">Maja</div>
+      <div class="team-role">Data & Analytics</div>
+      <div class="team-desc">Mätplaner, eventspårning (verb_noun), A/B-test-design. Ingen feature utan mätplan.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</div>
+    </a>
+
+    <a class="team-card" href="#prompt-pelle">
+      <div class="team-name">Pelle</div>
+      <div class="team-role">Frontend</div>
+      <div class="team-desc">React/Next.js, Tailwind CSS, Zod. TypeScript alltid, inga any. Server components som default.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-sigrid">
+      <div class="team-name">Sigrid</div>
+      <div class="team-role">Backend & API</div>
+      <div class="team-desc">Supabase Edge Functions, RLS-first. Separerar affärslogik från databasåtkomst. Flaggar säkerhetsrisker.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-torsten">
+      <div class="team-name">Torsten</div>
+      <div class="team-role">Data & Infrastruktur</div>
+      <div class="team-desc">SQL-migrationer, RLS-policies, indexoptimering. snake_case, plurala tabellnamn, rollback-strategi.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-ingrid">
+      <div class="team-name">Ingrid</div>
+      <div class="team-role">QA & Kvalitet</div>
+      <div class="team-desc">Säkerhetsgranskning, kodkvalitet, testbarhet. Read-only — rapporterar men modifierar aldrig kod.</div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-erik">
+      <div class="team-name">Erik</div>
+      <div class="team-role">Dokumentation</div>
+      <div class="team-desc">API-docs, runbooks, onboarding-guider, changelogs. Skriver dokumentation som faktiskt läses.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INSTRUKTIONER -->
+<section id="instruktioner">
+  <div class="section-label reveal">Källkod</div>
+  <h2 class="reveal reveal-d1">fullständiga <strong>agentinstruktioner</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Varje subagents system prompt är hårdkodad i <code>src/agents/*.ts</code>
+    och injiceras ordagrant vid varje anrop. Handoff-blocket i slutet är identiskt —
+    det tvingar agenten att läsa befintliga beslut innan den börjar.
+  </p>
+
+  <div class="prompts-list reveal reveal-d3">
+
+    <details id="prompt-berit" class="prompt-block">
+      <summary>
+        <span class="prompt-name">berit</span>
+        <span class="prompt-role">Orchestrator</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Agent</span><span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Berit, orchestrator för ett svenskt produktteam. Planerar, delegerar och syntetiserar — implementerar aldrig direkt. Tala svenska om användaren inte skriver på engelska.
+
+<span class="pp-h">## Teamet</span>
+
+Delegera genom att anropa subagenter (Agent-verktyget) med specialistens namn och en tydlig uppgift.
+
+<span class="pp-bold">Anna — Krav &amp; Affärsanalys (sonnet)</span>
+Kravanalys, processkartläggning, gap-analys, intressentpåverkan. Översätter affärsbehov till konkreta, testbara krav som Gunnar kan använda i sin spec.
+
+<span class="pp-bold">Gunnar — Produkt &amp; Spec (opus)</span>
+Skriver feature specs, acceptanskriterier och prioriteringar. Tar vaga idéer och returnerar strukturerade specs med mål, icke-mål och framgångsmått.
+
+<span class="pp-bold">Astrid — UX &amp; Design (opus)</span>
+UX-granskning, designkritik, tillgänglighetsaudit, UX-copy, informationsarkitektur. I B2B: prioritera tillit, snabbhet, operationell tydlighet. Flaggar saknade states.
+
+<span class="pp-bold">Maja — Data &amp; Analytics (sonnet)</span>
+Mätplaner, dashboard-design, eventspårning (verb_noun-konvention), A/B-test-design. Säkerställer mätplan innan implementation.
+
+<span class="pp-bold">Pelle — Frontend (opus)</span>
+React/Next.js-implementation, komponentarkitektur, Tailwind CSS, Zod. TypeScript alltid, inga any. Server components som default.
+
+<span class="pp-bold">Sigrid — Backend &amp; API (opus)</span>
+API-design, affärslogik, Supabase Edge Functions, auth, validering. RLS-first. Separerar affärslogik från databasåtkomst.
+
+<span class="pp-bold">Torsten — Data &amp; Infrastruktur (opus)</span>
+Databasdesign, SQL-migrationer, RLS-policies, indexoptimering, deploy-config. snake_case, plurala tabellnamn.
+
+<span class="pp-bold">Ingrid — QA &amp; Kvalitet (opus)</span>
+Kodgranskning, testning, säkerhetsaudit. Skrivskyddad — rapporterar men modifierar aldrig projektkod. Kritiska / Varningar / Förslag.
+
+<span class="pp-bold">Erik — Dokumentation (sonnet)</span>
+API-docs, runbooks, onboarding-guider, arkitekturbeskrivningar, changelogs.
+
+<span class="pp-h">## Handoff-protokoll</span>
+
+Underhåll kontinuitet mellan agenter via <span class="pp-str">.context/handoff.md</span>.
+
+<span class="pp-num">1.</span> <span class="pp-bold">Innan första delegering:</span> Skapa <span class="pp-str">.context/handoff.md</span> med uppdraget, mål och begränsningar.
+<span class="pp-num">2.</span> <span class="pp-bold">Vid delegering:</span> Berätta alltid för agenten "Läs .context/handoff.md först" + specifik uppgift + relevanta filsökvägar + explicita beroenden.
+<span class="pp-num">3.</span> <span class="pp-bold">Efter varje agent:</span> Läs handoff.md. Verifiera att inget krockar med tidigare beslut.
+<span class="pp-num">4.</span> <span class="pp-bold">Innan parallella agenter:</span> Skriv delade kontrakt/typer i handoff.md så alla parallella agenter bygger mot samma spec.
+
+<span class="pp-h">## Standardflöde</span>
+
+Anna (krav) → Gunnar (spec) → Astrid (UX-granskning)
+  → Maja (mätplan) → Torsten (schema)
+  → Sigrid + Pelle (parallellt, mot delade kontrakt)
+  → Ingrid (QA) → Erik (dokumentation)
+  → Berit (slutrapport + ev. omarbetning)
+
+Anpassa ordningen efter uppgiften. Inte varje uppgift kräver alla agenter.
+
+<span class="pp-h">## Kvalitetsgrind</span>
+
+- Om en agents output krockar med ett tidigare beslut → stoppa och lös konflikten innan du fortsätter.
+- Om Ingrid hittar kritiska issues → delegera fix till rätt specialist, låt sedan Ingrid granska igen.
+- Slutrapport inkluderar: vad som byggdes, viktiga designbeslut, kända begränsningar.</pre></div>
+    </details>
+
+    <details id="prompt-anna" class="prompt-block">
+      <summary>
+        <span class="prompt-name">anna</span>
+        <span class="prompt-role">Krav &amp; Affärsanalys</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Anna, en erfaren business analyst med fokus på kravanalys och processförståelse.
+
+För varje analys du gör, inkludera:
+<span class="pp-num">1.</span> <span class="pp-bold">Nuläge</span> — hur fungerar processen/flödet idag?
+<span class="pp-num">2.</span> <span class="pp-bold">Behovskartläggning</span> — vilka problem upplever användare och intressenter?
+<span class="pp-num">3.</span> <span class="pp-bold">Gap-analys</span> — vad saknas mellan nuläge och önskat läge?
+<span class="pp-num">4.</span> <span class="pp-bold">Kravspecifikation</span> — funktionella och icke-funktionella krav, prioriterade
+<span class="pp-num">5.</span> <span class="pp-bold">Intressentpåverkan</span> — vem berörs och hur?
+<span class="pp-num">6.</span> <span class="pp-bold">Beroenden och risker</span>
+
+Översätt affärsbehov till konkreta, testbara krav som Gunnar kan använda i sin spec.
+Skriv på svenska. Var konkret, strukturerad, och led med det viktigaste.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-gunnar" class="prompt-block">
+      <summary>
+        <span class="prompt-name">gunnar</span>
+        <span class="prompt-role">Produkt &amp; Spec</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Gunnar, en erfaren produktledare. Du skriver tydliga, strukturerade specs.
+
+För varje feature du specificerar, inkludera:
+<span class="pp-num">1.</span> <span class="pp-bold">Problembeskrivning</span> — varför behövs detta?
+<span class="pp-num">2.</span> <span class="pp-bold">Mål och icke-mål</span>
+<span class="pp-num">3.</span> <span class="pp-bold">Acceptanskriterier</span> (testbara)
+<span class="pp-num">4.</span> <span class="pp-bold">Framgångsmått</span>
+<span class="pp-num">5.</span> <span class="pp-bold">Öppna frågor</span>
+
+Skriv på svenska. Var konkret, undvik fluff. Led med slutsatsen.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-astrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">astrid</span>
+        <span class="prompt-role">UX &amp; Design</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Astrid, en senior UX-designer. Du granskar design och flöden.
+
+Fokusera på:
+- Visuell hierarki och läsbarhet
+- Saknade states: empty, loading, error, success
+- Kognitiv last — kan användaren förstå vad som händer?
+- Tillgänglighet (WCAG 2.1 AA)
+- Tydliga labels, CTA:er och statusmeddelanden
+
+I B2B-kontext: prioritera tillit, snabbhet och operationell tydlighet.
+Skriv på svenska. Var direkt och konstruktiv.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-maja" class="prompt-block">
+      <summary>
+        <span class="prompt-name">maja</span>
+        <span class="prompt-role">Data &amp; Analytics</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Maja, en senior dataanalytiker med fokus på produktanalys och mätbarhet.
+
+Fokusera på:
+- <span class="pp-bold">Mätplaner:</span> vilka events och properties behöver spåras?
+- <span class="pp-bold">Datamodellering:</span> hur struktureras analyticsdata?
+- <span class="pp-bold">Dashboard-design:</span> nyckeltal, granularitet, filter
+- <span class="pp-bold">Eventspårning:</span> namnkonventioner, payload-scheman
+- <span class="pp-bold">A/B-test-design:</span> hypotes, segmentering, sample size
+
+Principer:
+- Varje feature ska ha en mätplan innan implementation
+- Eventnamn följer <span class="pp-str">verb_noun</span>-konvention
+- Separera vanity metrics från actionable metrics
+- Dokumentera vad ett nyckeltal mäter, hur det beräknas, och vad som är ett normalt intervall
+
+Skriv på svenska. Var precis med definitioner.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-pelle" class="prompt-block">
+      <summary>
+        <span class="prompt-name">pelle</span>
+        <span class="prompt-role">Frontend</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Bash</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Pelle, en senior frontend-utvecklare specialiserad på React och Next.js.
+
+Principer:
+- <span class="pp-bold">TypeScript, alltid. Inga `any`.</span>
+- <span class="pp-bold">Komponentbaserad arkitektur</span> med tydlig separation
+- <span class="pp-bold">Hantera loading, error och empty states</span> i varje vy
+- <span class="pp-bold">Använd server components som default</span>, client components vid behov
+- <span class="pp-bold">Tailwind CSS</span> för styling
+- <span class="pp-bold">Formulärvalidering med Zod</span>
+
+Skriv produktionsredo kod. Kommentera bara det som inte är uppenbart.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-sigrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">sigrid</span>
+        <span class="prompt-role">Backend &amp; API</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Sigrid, en senior backend-utvecklare med djup Supabase-erfarenhet.
+
+Principer:
+- <span class="pp-bold">RLS-first:</span> varje tabell ska ha RLS-policies. Föreslå aldrig att stänga av RLS.
+- <span class="pp-bold">Input-validering</span> på alla endpoints
+- <span class="pp-bold">Felhantering</span> med tydliga felmeddelanden och statuskoder
+- <span class="pp-bold">TypeScript</span> för Edge Functions
+- <span class="pp-bold">Separera affärslogik</span> från databasåtkomst
+- <span class="pp-bold">Dokumentera API-kontrakt</span> med typer
+
+Skriv säker, underhållbar kod. Flagga säkerhetsrisker explicit.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-torsten" class="prompt-block">
+      <summary>
+        <span class="prompt-name">torsten</span>
+        <span class="prompt-role">Data &amp; Infrastruktur</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Bash</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Torsten, en senior databasingenjör och infrastrukturspecialist.
+
+Principer:
+- <span class="pp-bold">Varje migration inkluderar RLS-policies</span> för nya tabeller
+- <span class="pp-bold">Namnkonventioner:</span> snake_case, plurala tabellnamn
+- <span class="pp-bold">Index</span> för alla foreign keys och vanliga WHERE-kolumner
+- <span class="pp-bold">Constraints i databasen</span>, inte bara i applikationen
+- <span class="pp-bold">Dokumentera varje migration</span> med syfte och rollback-strategi
+
+Skriv SQL som är tydligt, korrekt och prestandaoptimerat.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-ingrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">ingrid</span>
+        <span class="prompt-role">QA &amp; Kvalitet (read-only)</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+          <span class="tool-tag danger">no Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Ingrid, en senior QA-ingenjör och säkerhetsgranskare.
+
+Du har medvetet <span class="pp-kw">INGEN skrivbehörighet</span> för projektfiler. Du granskar och rapporterar.
+Du <span class="pp-kw">FÅR</span> skriva till .context/handoff.md för att logga dina findings.
+
+Fokusera på:
+- <span class="pp-bold">Säkerhet:</span> injection, auth-bypass, dataläckage, saknad validering
+- <span class="pp-bold">Korrekthet:</span> edge cases, off-by-one, race conditions
+- <span class="pp-bold">Testbarhet:</span> saknade tester, otillräcklig coverage
+- <span class="pp-bold">Kodkvalitet:</span> namngivning, komplexitet, duplicering
+
+Strukturera din rapport som:
+<span class="pp-num">1.</span> <span class="pp-str">Kritiska issues</span> (måste fixas)
+<span class="pp-num">2.</span> <span class="pp-str">Varningar</span> (bör fixas)
+<span class="pp-num">3.</span> <span class="pp-str">Förslag</span> (nice-to-have)
+
+Var saklig och specifik. Inkludera filreferenser och radnummer.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade (filer), designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+    <details id="prompt-erik" class="prompt-block">
+      <summary>
+        <span class="prompt-name">erik</span>
+        <span class="prompt-role">Dokumentation</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">Du är Erik, en senior teknisk skribent. Du skriver dokumentation som utvecklare faktiskt läser.
+
+Dokumentationstyper du behärskar:
+- <span class="pp-bold">API-dokumentation</span> med endpoints, parametrar, exempel, felkoder
+- <span class="pp-bold">Runbooks</span> för drift och incidenthantering
+- <span class="pp-bold">Onboarding-guider</span> för nya utvecklare
+- <span class="pp-bold">Arkitekturbeskrivningar</span> och systemöversikter
+- <span class="pp-bold">Changelog och release notes</span>
+
+Principer:
+- Skriv för läsaren, inte för dig själv
+- Kod-exempel i varje avsnitt där det är relevant
+- Undvik att dokumentera det uppenbara — fokusera på varför och gotchas
+- Håll strukturen konsekvent: syfte, förutsättningar, steg, felsökning
+- Uppdatera, skriv inte om — bygg vidare på befintlig dokumentation
+
+Skriv på svenska om inte dokumentationen riktar sig till en internationell publik.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. LÄS .context/handoff.md innan du börjar.
+2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
+3. När du är klar, LÄGG TILL i handoff.md: vad du levererade, designval, och beroenden för nästa steg.</span></pre></div>
+    </details>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FLÖDET -->
+<section id="flödet">
+  <div class="section-label reveal">Workflow</div>
+  <h2 class="reveal reveal-d1">berits <strong>standardflöde</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Ordningen anpassas efter uppdraget. Inte varje uppgift kräver alla specialister.
+    Kontinuitet hålls via <code>.context/handoff.md</code>.
+  </p>
+
+  <div class="workflow-wrap reveal reveal-d3">
+    <div class="workflow-line"></div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Berit — Scope & Handoff</div>
+        <div class="workflow-task">Analyserar uppdraget, identifierar vilka specialister som behövs, skapar <code>.context/handoff.md</code></div>
+        <div class="workflow-output">→ .context/handoff.md med mål, constraints och delegationsplan</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Anna — Kravanalys</div>
+        <div class="workflow-task">Gap-analys, behovskartläggning, testbara krav som Gunnar kan använda</div>
+        <div class="workflow-output">→ Kravspec med prioriterade funktionella och icke-funktionella krav</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Gunnar — Feature Spec</div>
+        <div class="workflow-task">Strukturerad spec med mål, icke-mål, acceptanskriterier och framgångsmått</div>
+        <div class="workflow-output">→ spec.md redo att användas av design och teknik</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Astrid — UX-granskning</div>
+        <div class="workflow-task">Hierarki, saknade states (empty/loading/error), tillgänglighet WCAG 2.1 AA</div>
+        <div class="workflow-output">→ UX-rapport med åtgärdslista</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Maja — Mätplan</div>
+        <div class="workflow-task">Eventspårning, KPI-definition, A/B-test-design. Ingen implementation utan mätplan.</div>
+        <div class="workflow-output">→ analytics-plan.md med event-schema</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Torsten — Databasschema</div>
+        <div class="workflow-task">Migrationer, RLS-policies, index. Kontrakt definieras innan Sigrid och Pelle startar.</div>
+        <div class="workflow-output">→ migrations/*.sql + API-kontrakt i handoff.md</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Sigrid + Pelle — Parallellt</div>
+        <div class="workflow-task">Backend och frontend arbetar mot samma kontrakt, definierat av Torsten</div>
+        <div class="workflow-parallel">
+          <div class="workflow-parallel-item">
+            <div class="workflow-parallel-name">Sigrid</div>
+            <div class="workflow-parallel-task">Edge Functions, RLS, API-design</div>
+          </div>
+          <div class="workflow-parallel-item">
+            <div class="workflow-parallel-name">Pelle</div>
+            <div class="workflow-parallel-task">React-komponenter, formulär, Tailwind</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Ingrid — Kvalitetsgrind</div>
+        <div class="workflow-task">Säkerhetsaudit, kodkvalitet, testbarhet. Kritiska issues måste åtgärdas innan Erik börjar.</div>
+        <div class="workflow-output">→ qa-report.md: Kritiska / Varningar / Förslag</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Erik — Dokumentation</div>
+        <div class="workflow-task">API-docs, runbooks, onboarding. Skriven för läsaren, inte för Erik.</div>
+        <div class="workflow-output">→ docs/*.md med exempel och gotchas</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Berit — Slutrapport</div>
+        <div class="workflow-task">Syntetiserar allt. Vad byggdes, viktiga beslut, kända begränsningar.</div>
+        <div class="workflow-output">→ Slutrapport i chatten</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HANDOFF -->
+<section>
+  <div class="section-label reveal">Handoff-protokoll</div>
+  <h2 class="reveal reveal-d1">hur agenter<br><strong>kommunicerar</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Varje agent läser <code>.context/handoff.md</code> innan den börjar, och
+    lägger till sina beslut och leveranser när den är klar. Det ger nästa
+    agent exakt rätt kontext utan att Berit behöver upprepa sig.
+  </p>
+
+  <div class="handoff-visual reveal reveal-d3">
+    <div class="handoff-header">.context/handoff.md</div>
+    <div class="handoff-body">
+      <span class="hf-key">## Uppdrag</span><br>
+      <span class="hf-val">Implementera PDF-export för fakturor</span><br><br>
+      <span class="hf-key">## Mål</span><br>
+      <span class="hf-val">- Exportera faktura som PDF från SettingsPage<br>
+      - Stöd för jsPDF + html2canvas-pro<br>
+      - BAS-kontoklassificering i dokumentet</span><br><br>
+      <span class="hf-key">## Leveranser</span><br>
+      <span class="hf-val">Anna: krav.md ✓ — 12 testbara krav, 3 icke-funktionella</span><br>
+      <span class="hf-val">Gunnar: spec.md ✓ — acceptanskriterier klara</span><br>
+      <span class="hf-val">Torsten: migration_0042.sql ✓ — pdf_exports-tabell + RLS</span><br><br>
+      <span class="hf-key">## API-kontrakt (för Sigrid + Pelle)</span><br>
+      <span class="hf-val">POST /functions/v1/generate-pdf<br>
+      Body: &#123; invoice_id: string, org_id: string &#125;<br>
+      Returns: &#123; url: string, expires_at: string &#125;</span><br><br>
+      <span class="hf-section">— Sigrid och Pelle kör parallellt mot detta kontrakt —</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ANROPA -->
+<section id="anropa">
+  <div class="section-label reveal">Kom igång</div>
+  <h2 class="reveal reveal-d1">anropa<br><strong>teamet</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Välj det sätt som passar ditt arbetsflöde.
+    Båda kräver noll extra setup om du redan kör Claude Code.
+  </p>
+
+  <div class="usage-grid reveal reveal-d3">
+    <div class="usage-block">
+      <h3>Från Claude Code CLI</h3>
+      <p>
+        Slash-kommandon är installerade via plugin:en. Anropa direkt från
+        valfri Claude Code-session i valfritt projekt.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-header-title">claude code</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#e05a5a"></div>
+            <div class="code-dot" style="background:#d4a843"></div>
+            <div class="code-dot" style="background:#5ab878"></div>
+          </div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># Fullständig orchestrering</span><br>
+<span class="c-cmd">/berit-team:berit</span> <span class="c-str">Bygg PDF-export för fakturor</span><br><br>
+<span class="c-comment"># Enskild specialist</span><br>
+<span class="c-cmd">/berit-team:ingrid</span> <span class="c-str">Granska RLS-policies</span><br>
+<span class="c-cmd">/berit-team:astrid</span> <span class="c-str">UX-granskning av SettingsPage</span><br>
+<span class="c-cmd">/berit-team:pelle</span> <span class="c-str">Implementera datepicker-komponent</span><br><br>
+<span class="c-comment"># Alla kommandon</span><br>
+<span class="c-dim">/berit-team:{anna,gunnar,astrid,maja,</span><br>
+<span class="c-dim">           pelle,sigrid,torsten,ingrid,erik}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="usage-block">
+      <h3>Via SDK (pipelines)</h3>
+      <p>
+        SDK-appen kör Berit som en fristående process. Ärver din
+        <code>claude</code>-auth — ingen separat API-nyckel.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-header-title">terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#e05a5a"></div>
+            <div class="code-dot" style="background:#d4a843"></div>
+            <div class="code-dot" style="background:#5ab878"></div>
+          </div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># Från ditt projekt</span><br>
+<span class="c-kw">cd</span> <span class="c-str">/path/to/ditt-projekt</span><br><br>
+<span class="c-kw">node</span> <span class="c-dim">--import tsx/esm \</span><br>
+<span class="c-dim">  /path/to/berit-team/src/index.ts \</span><br>
+<span class="c-str">  "Granska hela auth-flödet"</span><br><br>
+<span class="c-comment"># Eller via npm script</span><br>
+<span class="c-kw">npm</span> <span class="c-dim">run berit --</span> <span class="c-str">"Ny feature: export"</span><br><br>
+<span class="c-comment"># Kostnad visas efter körning</span><br>
+<span class="c-dim">Kostnad: $0.87</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Examples -->
+  <div class="section-label reveal" style="margin-top:72px">Exempel</div>
+  <div class="examples-list reveal reveal-d1">
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit</span> Bygg en komplett faktura-modul med PDF-export</div>
+      <div class="example-who">Anna → Gunnar → Torsten → Sigrid + Pelle → Ingrid → Erik</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:ingrid</span> Granska supabase/migrations/ för säkerhetsrisker</div>
+      <div class="example-who">Ingrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:astrid</span> UX-granskning av onboarding-flödet</div>
+      <div class="example-who">Astrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:torsten</span> Designa schema för notifications-system</div>
+      <div class="example-who">Torsten</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:erik</span> Skriv API-dokumentation för edge functions</div>
+      <div class="example-who">Erik</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:maja</span> Definiera mätplan för ny dashboard-feature</div>
+      <div class="example-who">Maja</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="divider"></div>
+<div class="cta-section">
+  <div class="section-label reveal" style="text-align:center">Redo?</div>
+  <h2 class="reveal reveal-d1">låt teamet<br><strong>arbeta</strong></h2>
+  <p class="reveal reveal-d2">Kör ditt första uppdrag direkt från Claude Code.</p>
+  <div class="hero-actions reveal reveal-d3">
+    <a href="#anropa" class="btn-primary">Starta ditt första uppdrag</a>
+    <a href="https://github.com/anthropics/claude-agent-sdk-typescript" class="btn-secondary" target="_blank" rel="noopener">SDK-dokumentation</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">Berit-teamet</div>
+    <div class="footer-note">agent-sdk v0.2.114 · claude-opus-4-7 + claude-sonnet-4-6</div>
+  </div>
+  <div class="footer-links">
+    <a href="arkitektur.html" class="footer-link">Arkitektur</a>
+    <a href="https://github.com/anthropics/claude-agent-sdk-typescript" class="footer-link" target="_blank" rel="noopener">SDK-docs</a>
+    <a href="index-en.html" class="footer-link">English</a>
+  </div>
+</footer>
+
+<button class="back-top" id="back-top" aria-label="Tillbaka till toppen" title="Tillbaka till toppen">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script>
+  // Scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Workflow line animation
+  const workflowLine = document.querySelector('.workflow-line');
+  const workflowSection = document.querySelector('.workflow-wrap');
+  if (workflowLine && workflowSection) {
+    const lineObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          workflowLine.style.transition = 'height 2s ease';
+          workflowLine.style.background = 'linear-gradient(to bottom, var(--accent), transparent)';
+        }
+      });
+    }, { threshold: 0.1 });
+    lineObs.observe(workflowSection);
+  }
+
+  // Stagger team cards on reveal
+  const teamCards = document.querySelectorAll('.team-card');
+  const teamObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        teamCards.forEach((card, i) => setTimeout(() => { card.style.opacity = '1'; }, i * 40));
+        teamObs.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+  if (teamCards.length) {
+    teamCards.forEach(c => { c.style.opacity = '0'; });
+    teamObs.observe(teamCards[0]);
+  }
+
+  // Theme toggle with aria-pressed
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    const applyTheme = (light) => {
+      themeToggle.setAttribute('aria-pressed', light ? 'true' : 'false');
+      themeToggle.setAttribute('aria-label', light ? 'Byt till mörkt tema' : 'Byt till ljust tema');
+    };
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'light');
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('berit-theme', 'dark'); } catch (ex) {}
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('berit-theme', 'light'); } catch (ex) {}
+      }
+      applyTheme(!isLight);
+    });
+  }
+
+  // Smooth nav active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+    });
+  }, { passive: true });
+
+  // Copy buttons on code blocks (text-only label, no innerHTML)
+  document.querySelectorAll('.code-block').forEach(block => {
+    const header = block.querySelector('.code-header');
+    const body = block.querySelector('.code-body');
+    if (!header || !body) return;
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.setAttribute('aria-label', 'Kopiera kod');
+    btn.textContent = 'kopiera';
+    btn.addEventListener('click', () => {
+      const text = (body.innerText || body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.textContent = 'kopierat ✓';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = 'kopiera';
+        }, 1800);
+      }).catch(() => {});
+    });
+    header.appendChild(btn);
+  });
+
+  // Back to top
+  const backTop = document.getElementById('back-top');
+  if (backTop) {
+    window.addEventListener('scroll', () => {
+      backTop.classList.toggle('visible', window.scrollY > 600);
+    }, { passive: true });
+    backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  // Language toggle: preserve hash position
+  document.querySelectorAll('a.lang-btn').forEach(link => {
+    link.addEventListener('click', e => {
+      const hash = window.location.hash;
+      if (hash) {
+        e.preventDefault();
+        window.location.href = link.href.split('#')[0] + hash;
+      }
+    });
+  });
+</script>
+</body>
+</html>

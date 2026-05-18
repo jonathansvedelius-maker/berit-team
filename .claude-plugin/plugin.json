@@ -1,0 +1,9 @@
+{
+  "name": "berit-team",
+  "version": "0.2.0",
+  "description": "Swedish product team orchestrated by Berit. Delegates to Gunnar (product), Anna (BA), Astrid (UX), Pelle (frontend), Sigrid (backend), Torsten (infra), Ingrid (QA), Erik (docs), and Maja (data/analytics).",
+  "author": {
+    "name": "Jonathan Svedelius"
+  },
+  "keywords": ["orchestrator", "multi-agent", "product-team", "swedish"]
+}

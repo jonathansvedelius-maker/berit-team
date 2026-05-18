@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berit-team — Swedish AI Product Team</title>
+  <meta name="description" content="Nine AI specialists. One orchestrator. Built for product teams who want to delegate to real agents — not just prompt.">
+  <meta property="og:title" content="Berit-team — Swedish AI Product Team">
+  <meta property="og:description" content="Nine AI specialists. One orchestrator. Built for product teams who want to delegate to real agents — not just prompt.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="en-dark-hero.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Berit-team — Swedish AI Product Team">
+  <meta name="twitter:description" content="Nine AI specialists. One orchestrator. Built for product teams who want to delegate to real agents — not just prompt.">
+  <meta name="twitter:image" content="en-dark-hero.png">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('berit-theme');
+        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = stored || (prefersLight ? 'light' : 'dark');
+        if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;500;700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #070707;
+      --bg-card:     #0d0d0d;
+      --bg-raised:   #111111;
+      --bg-deep:     #050505;
+      --bg-code:     #0a0a0a;
+      --nav-bg:      rgba(7,7,7,0.82);
+      --border:      rgba(255,255,255,0.07);
+      --border-hi:   rgba(200,169,110,0.3);
+      --text:        #ede9e1;
+      --text-dim:    #888;
+      --text-faint:  #7a7a72;
+      --text-mute:   #7a7a72;
+      --accent:      #c8a96e;
+      --accent-dim:  rgba(200,169,110,0.15);
+      --accent-glow: rgba(200,169,110,0.06);
+      --accent-fg:   #000;
+      --red:         #e05a5a;
+      --green:       #5ab878;
+      --blue:        #5a8fe0;
+      --shadow-accent: 0 0 12px rgba(200,169,110,0.4);
+      --noise-opacity: 0.03;
+      --mono:        'JetBrains Mono', ui-monospace, monospace;
+      --mono-alt:    'Geist Mono', ui-monospace, monospace;
+      --sans:        'Geist', system-ui, -apple-system, sans-serif;
+      --display:     'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    [data-theme="light"] {
+      --bg:          #faf7f1;
+      --bg-card:     #f2eee5;
+      --bg-raised:   #ece7db;
+      --bg-deep:     #e6e1d4;
+      --bg-code:     #f0ebdf;
+      --nav-bg:      rgba(250,247,241,0.88);
+      --border:      rgba(0,0,0,0.09);
+      --border-hi:   rgba(140,108,48,0.45);
+      --text:        #1a1713;
+      --text-dim:    #5a554c;
+      --text-faint:  #6b6560;
+      --text-mute:   #8c877c;
+      --accent:      #8c6c30;
+      --accent-dim:  rgba(140,108,48,0.14);
+      --accent-glow: rgba(140,108,48,0.1);
+      --accent-fg:   #faf7f1;
+      --red:         #b24545;
+      --green:       #3d8858;
+      --blue:        #3966b3;
+      --shadow-accent: 0 0 12px rgba(140,108,48,0.25);
+      --noise-opacity: 0.02;
+    }
+
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    [data-theme="light"] { color-scheme: light; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: var(--noise-opacity);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: var(--nav-bg);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo::before { content: '['; color: var(--accent); margin-right: 2px; }
+    .nav-logo::after  { content: ']'; color: var(--accent); margin-left: 2px; }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lang-switch {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .lang-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 5px 10px;
+      letter-spacing: 0.05em;
+      transition: background 0.15s, color 0.15s;
+      display: inline-block;
+    }
+    .lang-btn.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .lang-btn:not(.active):hover {
+      color: var(--text);
+      background: var(--bg-raised);
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 8px;
+      background: var(--bg-card);
+      color: var(--accent);
+      padding: 8px 16px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 12px;
+      text-decoration: none;
+      z-index: 9998;
+      transition: top 0.1s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-faint);
+      cursor: pointer;
+      padding: 3px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: var(--border-hi); }
+    .copy-btn.copied { color: var(--green); border-color: rgba(90,184,120,0.3); }
+
+    /* ── Back to top ── */
+    .back-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
+      z-index: 50;
+    }
+    .back-top.visible { opacity: 1; transform: translateY(0); }
+    .back-top:hover { color: var(--accent); border-color: var(--border-hi); }
+
+    /* ── Footer links ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left { display: flex; flex-direction: column; gap: 4px; }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+    .footer-link {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0;
+    }
+    .footer-link:hover { color: var(--text-dim); }
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--border-hi); color: var(--accent); }
+    .theme-toggle svg { width: 14px; height: 14px; display: block; }
+    .theme-toggle .icon-sun { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    [data-theme="light"] .theme-toggle .icon-sun { display: block; }
+    [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: var(--accent-fg);
+      padding: 8px 16px;
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-orb {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-hi);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(56px, 10vw, 132px);
+      font-weight: 200;
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      color: var(--text);
+      animation: fadeUp 0.8s 0.1s ease both;
+      margin-bottom: 32px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+      font-weight: 200;
+    }
+    .hero h1::after {
+      content: '_';
+      color: var(--accent);
+      margin-left: 4px;
+      animation: blink 2s steps(1) infinite;
+    }
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      55%, 100% { opacity: 0; }
+    }
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      animation: fadeUp 0.8s 0.2s ease both;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-fg);
+      padding: 12px 28px;
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 400;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      padding: 12px 28px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 13px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-top: 80px;
+      animation: fadeUp 0.8s 0.4s ease both;
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-n {
+      font-family: var(--display);
+      font-size: 38px;
+      font-weight: 200;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .hero-stat-l {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* ── Sections ── */
+    section { padding: 120px 48px; max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(34px, 4.4vw, 56px);
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    h2 strong { font-weight: 400; color: var(--accent); }
+    .section-intro {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Reveal animation ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Skills vs Agents ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 64px;
+      border: 1px solid var(--border);
+    }
+    .compare-card {
+      background: var(--bg-card);
+      padding: 48px;
+    }
+    .compare-card:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .compare-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .badge-skill { background: rgba(90,143,224,0.15); color: #5a8fe0; border: 1px solid rgba(90,143,224,0.2); }
+    .badge-agent { background: rgba(200,169,110,0.15); color: var(--accent); border: 1px solid var(--border-hi); }
+    .compare-card h3 {
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .compare-card p {
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .compare-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .compare-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .compare-list li::before {
+      content: '→';
+      color: var(--accent);
+      font-family: var(--mono);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .compare-cmd {
+      margin-top: 32px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .compare-cmd span { color: var(--text-dim); }
+
+    /* ── Team grid ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 64px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .team-card {
+      background: var(--bg);
+      padding: 32px 24px;
+      transition: background 0.25s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .team-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .team-card:hover { background: var(--bg-card); }
+    .team-card:hover::after { opacity: 1; }
+    .team-card.orchestrator {
+      grid-column: 1 / -1;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-hi);
+    }
+    .team-name {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .team-name::before { content: '['; color: var(--accent); opacity: 0.6; margin-right: 1px; }
+    .team-name::after  { content: ']'; color: var(--accent); opacity: 0.6; margin-left: 1px; }
+    .team-role {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .team-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .team-model {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--text-faint);
+      letter-spacing: 0;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .team-model.opus { border-color: rgba(200,169,110,0.2); color: var(--accent); }
+    .team-model.sonnet { border-color: rgba(90,143,224,0.2); color: #5a8fe0; }
+
+    /* ── Prompts (collapsible system prompts) ── */
+    .prompts-list {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .prompt-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .prompt-block[open] { border-color: var(--border-hi); }
+    .prompt-block summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .prompt-block summary::-webkit-details-marker { display: none; }
+    .prompt-block summary:hover { background: var(--bg-raised); }
+    .prompt-name {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .prompt-name::before { content: '['; color: var(--accent); margin-right: 1px; }
+    .prompt-name::after  { content: ']'; color: var(--accent); margin-left: 1px; }
+    .prompt-role {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: -0.005em;
+    }
+    .prompt-model {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      letter-spacing: 0;
+    }
+    .prompt-model.opus { color: var(--accent); border-color: rgba(200,169,110,0.25); }
+    .prompt-model.sonnet { color: #5a8fe0; border-color: rgba(90,143,224,0.25); }
+    .prompt-tools {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .prompt-tools-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .tool-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      letter-spacing: 0;
+    }
+    .tool-tag.danger {
+      color: var(--red);
+      border-color: rgba(224,90,90,0.2);
+      background: rgba(224,90,90,0.05);
+    }
+    .prompt-toggle {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text-faint);
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .prompt-block[open] .prompt-toggle::before { content: '−'; color: var(--accent); }
+    .prompt-block:not([open]) .prompt-toggle::before { content: '+'; }
+    .prompt-body {
+      border-top: 1px solid var(--border);
+      background: var(--bg-deep);
+    }
+    .prompt-pre {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      padding: 24px 28px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-x: auto;
+      margin: 0;
+      tab-size: 2;
+    }
+    .prompt-pre .pp-h    { color: var(--accent); font-weight: 500; }
+    .prompt-pre .pp-bold { color: var(--text); font-weight: 500; }
+    .prompt-pre .pp-kw   { color: var(--red); }
+    .prompt-pre .pp-num  { color: #5a8fe0; }
+    .prompt-pre .pp-str  { color: #5ab878; }
+    .prompt-pre .pp-com  { color: var(--text-faint); }
+
+    /* ── Workflow ── */
+    .workflow-wrap {
+      margin-top: 64px;
+      position: relative;
+    }
+    .workflow-line {
+      position: absolute;
+      left: 32px;
+      top: 24px;
+      bottom: 24px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .workflow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .workflow-step:last-child { border-bottom: none; }
+    .workflow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+      box-shadow: var(--shadow-accent);
+    }
+    .workflow-dot.dim { background: var(--text-faint); box-shadow: none; }
+    .workflow-content { flex: 1; }
+    .workflow-who {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .workflow-task {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .workflow-output {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+    .workflow-parallel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .workflow-parallel-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 2px;
+    }
+    .workflow-parallel-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .workflow-parallel-task {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ── Usage ── */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 64px;
+    }
+    .usage-block h3 {
+      font-family: var(--sans);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .usage-block p {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .code-block {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .code-header-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+    .code-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .code-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .code-body {
+      padding: 20px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .c-comment { color: var(--text-mute); }
+    .c-cmd     { color: var(--accent); }
+    .c-str     { color: #5ab878; }
+    .c-kw      { color: #5a8fe0; }
+    .c-dim     { color: var(--text-dim); }
+    .c-name    { color: var(--text); }
+
+    /* ── Examples ── */
+    .examples-list {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .example-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .example-row:hover { border-color: var(--border-hi); }
+    .example-cmd {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--accent);
+      flex: 1;
+    }
+    .example-cmd span { color: var(--text-dim); }
+    .example-who {
+      font-family: var(--mono-alt);
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Handoff ── */
+    .handoff-visual {
+      margin-top: 48px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .handoff-header {
+      background: var(--bg-raised);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .handoff-header::before { content: '📄'; font-size: 14px; }
+    .handoff-body {
+      padding: 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.9;
+      color: var(--text-dim);
+    }
+    .hf-key { color: var(--accent); }
+    .hf-val { color: var(--text); }
+    .hf-section { color: var(--text-dim); margin-top: 12px; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 160px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 800px 400px at 50% 100%, var(--accent-glow) 0%, transparent 70%);
+    }
+    .cta-section h2 {
+      font-size: clamp(40px, 6vw, 80px);
+      margin-bottom: 24px;
+    }
+    .cta-section p {
+      font-size: 17px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+
+    /* ── Footer ── */
+    .footer-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: -0.01em;
+    }
+    .footer-logo::before { content: '['; color: var(--accent); margin-right: 2px; }
+    .footer-logo::after  { content: ']'; color: var(--accent); margin-left: 2px; }
+    .footer-note {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-family: var(--mono);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section { padding: 80px 24px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-card:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-card.orchestrator { grid-column: 1 / -1; }
+      .usage-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .team-card.orchestrator { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="#top" class="skip-link">Skip to main content</a>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">berit</a>
+  <ul class="nav-links">
+    <li><a href="#concept">architecture</a></li>
+    <li><a href="#the-team">the team</a></li>
+    <li><a href="#prompts">prompts</a></li>
+    <li><a href="#workflow">workflow</a></li>
+    <li><a href="#use">use</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-switch" role="group" aria-label="Select language">
+      <a href="index.html" class="lang-btn">SV</a>
+      <span class="lang-btn active" aria-current="true">EN</span>
+    </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" aria-pressed="false" title="Toggle theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    </button>
+    <a href="#use" class="nav-cta">get started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-orb"></div>
+  <div class="hero-tag">claude-opus-4-7 · agent sdk v0.2.114</div>
+  <h1>berit<em>·</em>team</h1>
+  <p class="hero-sub">
+    Nine AI specialists. One orchestrator. Built for product teams who want to delegate
+    to real agents — not just prompt.
+  </p>
+  <div class="hero-actions">
+    <a href="#use" class="btn-primary">Start your first assignment</a>
+    <a href="arkitektur.html" class="btn-secondary">Read about the architecture</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n">9</div>
+      <div class="hero-stat-l">Specialists</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">2</div>
+      <div class="hero-stat-l">Models</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">$0.70</div>
+      <div class="hero-stat-l">Per assignment</div>
+    </div>
+    <div class="hero-stat" title="Inherits your existing Claude Code auth — no separate Anthropic key required">
+      <div class="hero-stat-n">0</div>
+      <div class="hero-stat-l">API keys required</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONCEPT: SKILLS VS AGENTS -->
+<section id="concept">
+  <div class="section-label reveal">Architecture</div>
+  <h2 class="reveal reveal-d1">skills <strong>vs</strong><br>real agents</h2>
+  <p class="section-intro reveal reveal-d2">
+    Berit-team can be used in two ways — depending on whether you work
+    interactively in Claude Code or want to run the team automated in a pipeline.
+  </p>
+
+  <div class="compare-grid reveal reveal-d3">
+    <div class="compare-card">
+      <div class="compare-badge badge-skill">Skills / Claude Code</div>
+      <h3>Conversation-based agents</h3>
+      <p>
+        Skills are markdown files loaded into your active conversation.
+        The slash command <code>/berit-team:berit</code> activates Berit's persona
+        and instructions directly in the session — no separate processes.
+      </p>
+      <ul class="compare-list">
+        <li>Runs in the same Claude Code session you're working in</li>
+        <li>Shares conversation history and context</li>
+        <li>No API key or extra installation required</li>
+        <li>Best for interactive, iterative work</li>
+        <li>Agents spawn as isolated subprocesses via the Agent tool</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit Build an invoice module
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-badge badge-agent">Agent SDK · TypeScript</div>
+      <h3>Process-isolated agents</h3>
+      <p>
+        The SDK app runs Berit as a standalone Node.js process via
+        <code>@anthropic-ai/claude-agent-sdk</code>. Each subagent is
+        fully isolated — its own tools, model and permissions.
+      </p>
+      <ul class="compare-list">
+        <li>Runs outside Claude Code — perfect for CI/CD and pipelines</li>
+        <li>Programmatic control via TypeScript</li>
+        <li>Inherits your existing <code>claude</code> binary's auth</li>
+        <li>Best for automation and scheduled jobs</li>
+        <li>Cost visible: <code>$0.70–2.00</code> per complete assignment</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>npm start -- "Review the auth flow"
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- THE TEAM -->
+<section id="the-team">
+  <div class="section-label reveal">Specialists</div>
+  <h2 class="reveal reveal-d1">meet <strong>the team</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Each specialist has their role, their model and their tools.
+    Berit orchestrates — they deliver.
+  </p>
+
+  <div class="team-grid reveal reveal-d3">
+    <a class="team-card orchestrator" href="#prompt-berit">
+      <div class="team-name">Berit</div>
+      <div class="team-role">Orchestrator</div>
+      <div class="team-desc">
+        Plans, delegates and synthesizes. Creates the handoff protocol,
+        verifies there are no conflicts between agents, and delivers the final report.
+        Never implements directly.
+      </div>
+      <div class="team-model opus">claude-opus-4-7</div>
+    </a>
+
+    <a class="team-card" href="#prompt-anna">
+      <div class="team-name">Anna</div>
+      <div class="team-role">Requirements & Business Analysis</div>
+      <div class="team-desc">Requirements analysis, gap analysis, stakeholder impact. Translates business needs into testable requirements.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</a>
+    </div>
+
+    <a class="team-card" href="#prompt-gunnar">
+      <div class="team-name">Gunnar</div>
+      <div class="team-role">Product & Spec</div>
+      <div class="team-desc">Feature specs, acceptance criteria, prioritization. Takes vague ideas and returns structured specs.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-astrid">
+      <div class="team-name">Astrid</div>
+      <div class="team-role">UX & Design</div>
+      <div class="team-desc">UX review, accessibility audit, design critique. WCAG 2.1 AA. Flags missing states.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-maja">
+      <div class="team-name">Maja</div>
+      <div class="team-role">Data & Analytics</div>
+      <div class="team-desc">Measurement plans, event tracking (verb_noun), A/B test design. No feature without a measurement plan.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</a>
+    </div>
+
+    <a class="team-card" href="#prompt-pelle">
+      <div class="team-name">Pelle</div>
+      <div class="team-role">Frontend</div>
+      <div class="team-desc">React/Next.js, Tailwind CSS, Zod. TypeScript always, no any. Server components by default.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-sigrid">
+      <div class="team-name">Sigrid</div>
+      <div class="team-role">Backend & API</div>
+      <div class="team-desc">Supabase Edge Functions, RLS-first. Separates business logic from data access. Flags security risks.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-torsten">
+      <div class="team-name">Torsten</div>
+      <div class="team-role">Data & Infrastructure</div>
+      <div class="team-desc">SQL migrations, RLS policies, index optimization. snake_case, plural table names, rollback strategy.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-ingrid">
+      <div class="team-name">Ingrid</div>
+      <div class="team-role">QA & Quality</div>
+      <div class="team-desc">Security review, code quality, testability. Read-only — reports but never modifies code.</div>
+      <div class="team-model opus">claude-opus-4-7</a>
+    </div>
+
+    <a class="team-card" href="#prompt-erik">
+      <div class="team-name">Erik</div>
+      <div class="team-role">Documentation</div>
+      <div class="team-desc">API docs, runbooks, onboarding guides, changelogs. Writes documentation that actually gets read.</div>
+      <div class="team-model sonnet">claude-sonnet-4-6</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROMPTS -->
+<section id="prompts">
+  <div class="section-label reveal">Source code</div>
+  <h2 class="reveal reveal-d1">complete <strong>agent instructions</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Each subagent's system prompt is hardcoded in <code>src/agents/*.ts</code>
+    and injected verbatim on every call. The handoff block at the end is identical —
+    it forces the agent to read existing decisions before starting.
+    Prompts are in Swedish — the agents are designed to work in Swedish.
+  </p>
+
+  <div class="prompts-list reveal reveal-d3">
+
+    <details id="prompt-berit" class="prompt-block">
+      <summary>
+        <span class="prompt-name">berit</span>
+        <span class="prompt-role">Orchestrator</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Agent</span><span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Berit, orchestrator for a Swedish product team. You plan, delegate and synthesize — never implement directly. Speak Swedish unless the user writes in English.
+
+<span class="pp-h">## The Team</span>
+
+Delegate by calling subagents (the Agent tool) with the specialist's name and a clear task.
+
+<span class="pp-bold">Anna — Requirements &amp; Business Analysis (sonnet)</span>
+Requirements analysis, process mapping, gap analysis, stakeholder impact. Translates business needs into concrete, testable requirements that Gunnar can use in their spec.
+
+<span class="pp-bold">Gunnar — Product &amp; Spec (opus)</span>
+Writes feature specs, acceptance criteria and prioritizations. Takes vague ideas and returns structured specs with goals, non-goals and success metrics.
+
+<span class="pp-bold">Astrid — UX &amp; Design (opus)</span>
+UX review, design critique, accessibility audit, UX copy, information architecture. In B2B: prioritize trust, speed, operational clarity. Flags missing states.
+
+<span class="pp-bold">Maja — Data &amp; Analytics (sonnet)</span>
+Measurement plans, dashboard design, event tracking (verb_noun convention), A/B test design. Ensures measurement plan before implementation.
+
+<span class="pp-bold">Pelle — Frontend (opus)</span>
+React/Next.js implementation, component architecture, Tailwind CSS, Zod. TypeScript always, no any. Server components by default.
+
+<span class="pp-bold">Sigrid — Backend &amp; API (opus)</span>
+API design, business logic, Supabase Edge Functions, auth, validation. RLS-first. Separates business logic from data access.
+
+<span class="pp-bold">Torsten — Data &amp; Infrastructure (opus)</span>
+Database design, SQL migrations, RLS policies, index optimization, deploy config. snake_case, plural table names.
+
+<span class="pp-bold">Ingrid — QA &amp; Quality (opus)</span>
+Code review, testing, security audit. Read-only — reports but never modifies project code. Critical / Warnings / Suggestions.
+
+<span class="pp-bold">Erik — Documentation (sonnet)</span>
+API docs, runbooks, onboarding guides, architecture descriptions, changelogs.
+
+<span class="pp-h">## Handoff Protocol</span>
+
+Maintain continuity between agents via <span class="pp-str">.context/handoff.md</span>.
+
+<span class="pp-num">1.</span> <span class="pp-bold">Before first delegation:</span> Create <span class="pp-str">.context/handoff.md</span> with the assignment, goals and constraints.
+<span class="pp-num">2.</span> <span class="pp-bold">When delegating:</span> Always tell the agent "Read .context/handoff.md first" + specific task + relevant file paths + explicit dependencies.
+<span class="pp-num">3.</span> <span class="pp-bold">After each agent:</span> Read handoff.md. Verify nothing conflicts with previous decisions.
+<span class="pp-num">4.</span> <span class="pp-bold">Before parallel agents:</span> Write shared contracts/types in handoff.md so all parallel agents build against the same spec.
+
+<span class="pp-h">## Default Flow</span>
+
+Anna (requirements) → Gunnar (spec) → Astrid (UX review)
+  → Maja (measurement plan) → Torsten (schema)
+  → Sigrid + Pelle (parallel, against shared contracts)
+  → Ingrid (QA) → Erik (documentation)
+  → Berit (final report + any rework)
+
+Adapt the order to the task. Not every task requires all agents.
+
+<span class="pp-h">## Quality Gate</span>
+
+- If an agent's output conflicts with a previous decision → stop and resolve the conflict before continuing.
+- If Ingrid finds critical issues → delegate the fix to the right specialist, then have Ingrid review again.
+- Final report includes: what was built, key design decisions, known limitations.</pre></div>
+    </details>
+
+    <details id="prompt-anna" class="prompt-block">
+      <summary>
+        <span class="prompt-name">anna</span>
+        <span class="prompt-role">Requirements &amp; Business Analysis</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Anna, an experienced business analyst focused on requirements analysis and process understanding.
+
+For every analysis you do, include:
+<span class="pp-num">1.</span> <span class="pp-bold">Current state</span> — how does the process/flow work today?
+<span class="pp-num">2.</span> <span class="pp-bold">Needs mapping</span> — what problems do users and stakeholders experience?
+<span class="pp-num">3.</span> <span class="pp-bold">Gap analysis</span> — what is missing between current and desired state?
+<span class="pp-num">4.</span> <span class="pp-bold">Requirements specification</span> — functional and non-functional requirements, prioritized
+<span class="pp-num">5.</span> <span class="pp-bold">Stakeholder impact</span> — who is affected and how?
+<span class="pp-num">6.</span> <span class="pp-bold">Dependencies and risks</span>
+
+Translate business needs into concrete, testable requirements that Gunnar can use in their spec.
+Write in Swedish. Be concrete, structured, and lead with the most important.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered, design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-gunnar" class="prompt-block">
+      <summary>
+        <span class="prompt-name">gunnar</span>
+        <span class="prompt-role">Product &amp; Spec</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Gunnar, an experienced product manager. You write clear, structured specs.
+
+For each feature you specify, include:
+<span class="pp-num">1.</span> <span class="pp-bold">Problem description</span> — why is this needed?
+<span class="pp-num">2.</span> <span class="pp-bold">Goals and non-goals</span>
+<span class="pp-num">3.</span> <span class="pp-bold">Acceptance criteria</span> (testable)
+<span class="pp-num">4.</span> <span class="pp-bold">Success metrics</span>
+<span class="pp-num">5.</span> <span class="pp-bold">Open questions</span>
+
+Write in Swedish. Be concrete, avoid fluff. Lead with the conclusion.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-astrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">astrid</span>
+        <span class="prompt-role">UX &amp; Design</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Astrid, a senior UX designer. You review design and flows.
+
+Focus on:
+- Visual hierarchy and readability
+- Missing states: empty, loading, error, success
+- Cognitive load — can the user understand what's happening?
+- Accessibility (WCAG 2.1 AA)
+- Clear labels, CTAs and status messages
+
+In B2B context: prioritize trust, speed and operational clarity.
+Write in Swedish. Be direct and constructive.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-maja" class="prompt-block">
+      <summary>
+        <span class="prompt-name">maja</span>
+        <span class="prompt-role">Data &amp; Analytics</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Maja, a senior data analyst focused on product analytics and measurability.
+
+Focus on:
+- <span class="pp-bold">Measurement plans:</span> what events and properties need to be tracked?
+- <span class="pp-bold">Data modeling:</span> how is analytics data structured?
+- <span class="pp-bold">Dashboard design:</span> key metrics, granularity, filters
+- <span class="pp-bold">Event tracking:</span> naming conventions, payload schemas
+- <span class="pp-bold">A/B test design:</span> hypothesis, segmentation, sample size
+
+Principles:
+- Every feature must have a measurement plan before implementation
+- Event names follow the <span class="pp-str">verb_noun</span> convention
+- Separate vanity metrics from actionable metrics
+- Document what a metric measures, how it is calculated, and what a normal range is
+
+Write in Swedish. Be precise with definitions.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered, design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-pelle" class="prompt-block">
+      <summary>
+        <span class="prompt-name">pelle</span>
+        <span class="prompt-role">Frontend</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Bash</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Pelle, a senior frontend developer specializing in React and Next.js.
+
+Principles:
+- <span class="pp-bold">TypeScript, always. No `any`.</span>
+- <span class="pp-bold">Component-based architecture</span> with clear separation
+- <span class="pp-bold">Handle loading, error and empty states</span> in every view
+- <span class="pp-bold">Use server components by default</span>, client components when needed
+- <span class="pp-bold">Tailwind CSS</span> for styling
+- <span class="pp-bold">Form validation with Zod</span>
+
+Write production-ready code. Only comment what is not obvious.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-sigrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">sigrid</span>
+        <span class="prompt-role">Backend &amp; API</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Sigrid, a senior backend developer with deep Supabase experience.
+
+Principles:
+- <span class="pp-bold">RLS-first:</span> every table must have RLS policies. Never suggest disabling RLS.
+- <span class="pp-bold">Input validation</span> on all endpoints
+- <span class="pp-bold">Error handling</span> with clear error messages and status codes
+- <span class="pp-bold">TypeScript</span> for Edge Functions
+- <span class="pp-bold">Separate business logic</span> from data access
+- <span class="pp-bold">Document API contracts</span> with types
+
+Write secure, maintainable code. Flag security risks explicitly.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-torsten" class="prompt-block">
+      <summary>
+        <span class="prompt-name">torsten</span>
+        <span class="prompt-role">Data &amp; Infrastructure</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Edit</span><span class="tool-tag">Bash</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Torsten, a senior database engineer and infrastructure specialist.
+
+Principles:
+- <span class="pp-bold">Every migration includes RLS policies</span> for new tables
+- <span class="pp-bold">Naming conventions:</span> snake_case, plural table names
+- <span class="pp-bold">Indexes</span> for all foreign keys and common WHERE columns
+- <span class="pp-bold">Constraints in the database</span>, not just in the application
+- <span class="pp-bold">Document every migration</span> with purpose and rollback strategy
+
+Write SQL that is clear, correct and performance-optimized.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-ingrid" class="prompt-block">
+      <summary>
+        <span class="prompt-name">ingrid</span>
+        <span class="prompt-role">QA &amp; Quality (read-only)</span>
+        <span class="prompt-model opus">opus 4.7</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+          <span class="tool-tag danger">no Write</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Ingrid, a senior QA engineer and security reviewer.
+
+You deliberately have <span class="pp-kw">NO write permission</span> for project files. You review and report.
+You <span class="pp-kw">MAY</span> write to .context/handoff.md to log your findings.
+
+Focus on:
+- <span class="pp-bold">Security:</span> injection, auth-bypass, data leakage, missing validation
+- <span class="pp-bold">Correctness:</span> edge cases, off-by-one, race conditions
+- <span class="pp-bold">Testability:</span> missing tests, insufficient coverage
+- <span class="pp-bold">Code quality:</span> naming, complexity, duplication
+
+Structure your report as:
+<span class="pp-num">1.</span> <span class="pp-str">Critical issues</span> (must fix)
+<span class="pp-num">2.</span> <span class="pp-str">Warnings</span> (should fix)
+<span class="pp-num">3.</span> <span class="pp-str">Suggestions</span> (nice-to-have)
+
+Be factual and specific. Include file references and line numbers.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered (files), design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+    <details id="prompt-erik" class="prompt-block">
+      <summary>
+        <span class="prompt-name">erik</span>
+        <span class="prompt-role">Documentation</span>
+        <span class="prompt-model sonnet">sonnet 4.6</span>
+        <span class="prompt-tools">
+          <span class="prompt-tools-label">tools</span>
+          <span class="tool-tag">Read</span><span class="tool-tag">Write</span><span class="tool-tag">Glob</span><span class="tool-tag">Grep</span>
+        </span>
+        <span class="prompt-toggle"></span>
+      </summary>
+      <div class="prompt-body"><pre class="prompt-pre">You are Erik, a senior technical writer. You write documentation that developers actually read.
+
+Documentation types you master:
+- <span class="pp-bold">API documentation</span> with endpoints, parameters, examples, error codes
+- <span class="pp-bold">Runbooks</span> for operations and incident management
+- <span class="pp-bold">Onboarding guides</span> for new developers
+- <span class="pp-bold">Architecture descriptions</span> and system overviews
+- <span class="pp-bold">Changelog and release notes</span>
+
+Principles:
+- Write for the reader, not for yourself
+- Code examples in every section where relevant
+- Avoid documenting the obvious — focus on why and gotchas
+- Keep the structure consistent: purpose, prerequisites, steps, troubleshooting
+- Update, don't rewrite — build on existing documentation
+
+Write in Swedish unless the documentation targets an international audience.
+
+<span class="pp-h">## Handoff</span>
+<span class="pp-com">1. READ .context/handoff.md before you start.
+2. Build on decisions and contracts that already exist — don't invent new things that conflict.
+3. When done, ADD TO handoff.md: what you delivered, design choices, and dependencies for the next step.</span></pre></div>
+    </details>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="section-label reveal">Workflow</div>
+  <h2 class="reveal reveal-d1">berit's <strong>default flow</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    The order adapts to the assignment. Not every task requires all specialists.
+    Continuity is maintained via <code>.context/handoff.md</code>.
+  </p>
+
+  <div class="workflow-wrap reveal reveal-d3">
+    <div class="workflow-line"></div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Berit — Scope & Handoff</div>
+        <div class="workflow-task">Analyses the assignment, identifies which specialists are needed, creates <code>.context/handoff.md</code></div>
+        <div class="workflow-output">→ .context/handoff.md with goals, constraints and delegation plan</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Anna — Requirements Analysis</div>
+        <div class="workflow-task">Gap analysis, needs mapping, testable requirements that Gunnar can use</div>
+        <div class="workflow-output">→ Requirements spec with prioritized functional and non-functional requirements</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Gunnar — Feature Spec</div>
+        <div class="workflow-task">Structured spec with goals, non-goals, acceptance criteria and success metrics</div>
+        <div class="workflow-output">→ spec.md ready to be used by design and engineering</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Astrid — UX Review</div>
+        <div class="workflow-task">Hierarchy, missing states (empty/loading/error), accessibility WCAG 2.1 AA</div>
+        <div class="workflow-output">→ UX report with action list</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Maja — Measurement Plan</div>
+        <div class="workflow-task">Event tracking, KPI definition, A/B test design. No implementation without a measurement plan.</div>
+        <div class="workflow-output">→ analytics-plan.md with event schema</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Torsten — Database Schema</div>
+        <div class="workflow-task">Migrations, RLS policies, indexes. Contract defined before Sigrid and Pelle start.</div>
+        <div class="workflow-output">→ migrations/*.sql + API contract in handoff.md</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Sigrid + Pelle — Parallel</div>
+        <div class="workflow-task">Backend and frontend work against the same contract, defined by Torsten</div>
+        <div class="workflow-parallel">
+          <div class="workflow-parallel-item">
+            <div class="workflow-parallel-name">Sigrid</div>
+            <div class="workflow-parallel-task">Edge Functions, RLS, API design</div>
+          </div>
+          <div class="workflow-parallel-item">
+            <div class="workflow-parallel-name">Pelle</div>
+            <div class="workflow-parallel-task">React components, forms, Tailwind</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Ingrid — Quality Gate</div>
+        <div class="workflow-task">Security audit, code quality, testability. Critical issues must be resolved before Erik starts.</div>
+        <div class="workflow-output">→ qa-report.md: Critical / Warnings / Suggestions</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Erik — Documentation</div>
+        <div class="workflow-task">API docs, runbooks, onboarding. Written for the reader, not for Erik.</div>
+        <div class="workflow-output">→ docs/*.md with examples and gotchas</div>
+      </div>
+    </div>
+
+    <div class="workflow-step">
+      <div class="workflow-dot"></div>
+      <div class="workflow-content">
+        <div class="workflow-who">Berit — Final Report</div>
+        <div class="workflow-task">Synthesizes everything. What was built, key decisions, known limitations.</div>
+        <div class="workflow-output">→ Final report in chat</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HANDOFF -->
+<section>
+  <div class="section-label reveal">Handoff protocol</div>
+  <h2 class="reveal reveal-d1">how agents<br><strong>communicate</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Every agent reads <code>.context/handoff.md</code> before starting, and
+    appends its decisions and deliverables when done. This gives the next
+    agent exactly the right context without Berit having to repeat herself.
+  </p>
+
+  <div class="handoff-visual reveal reveal-d3">
+    <div class="handoff-header">.context/handoff.md</div>
+    <div class="handoff-body">
+      <span class="hf-key">## Assignment</span><br>
+      <span class="hf-val">Implement PDF export for invoices</span><br><br>
+      <span class="hf-key">## Goals</span><br>
+      <span class="hf-val">- Export invoice as PDF from SettingsPage<br>
+      - Support for jsPDF + html2canvas-pro<br>
+      - BAS account classification in the document</span><br><br>
+      <span class="hf-key">## Deliverables</span><br>
+      <span class="hf-val">Anna: requirements.md ✓ — 12 testable requirements, 3 non-functional</span><br>
+      <span class="hf-val">Gunnar: spec.md ✓ — acceptance criteria complete</span><br>
+      <span class="hf-val">Torsten: migration_0042.sql ✓ — pdf_exports table + RLS</span><br><br>
+      <span class="hf-key">## API Contract (for Sigrid + Pelle)</span><br>
+      <span class="hf-val">POST /functions/v1/generate-pdf<br>
+      Body: &#123; invoice_id: string, org_id: string &#125;<br>
+      Returns: &#123; url: string, expires_at: string &#125;</span><br><br>
+      <span class="hf-section">— Sigrid and Pelle run in parallel against this contract —</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- USE -->
+<section id="use">
+  <div class="section-label reveal">Get started</div>
+  <h2 class="reveal reveal-d1">call<br><strong>the team</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    Choose the approach that fits your workflow.
+    Both require zero extra setup if you're already running Claude Code.
+  </p>
+
+  <div class="usage-grid reveal reveal-d3">
+    <div class="usage-block">
+      <h3>From Claude Code CLI</h3>
+      <p>
+        Slash commands are installed via the plugin. Call directly from
+        any Claude Code session in any project.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-header-title">claude code</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#e05a5a"></div>
+            <div class="code-dot" style="background:#d4a843"></div>
+            <div class="code-dot" style="background:#5ab878"></div>
+          </div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># Full orchestration</span><br>
+<span class="c-cmd">/berit-team:berit</span> <span class="c-str">Build a PDF export for invoices</span><br><br>
+<span class="c-comment"># Individual specialist</span><br>
+<span class="c-cmd">/berit-team:ingrid</span> <span class="c-str">Review RLS policies</span><br>
+<span class="c-cmd">/berit-team:astrid</span> <span class="c-str">UX review of SettingsPage</span><br>
+<span class="c-cmd">/berit-team:pelle</span> <span class="c-str">Implement datepicker component</span><br><br>
+<span class="c-comment"># All commands</span><br>
+<span class="c-dim">/berit-team:{anna,gunnar,astrid,maja,</span><br>
+<span class="c-dim">           pelle,sigrid,torsten,ingrid,erik}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="usage-block">
+      <h3>Via SDK (pipelines)</h3>
+      <p>
+        The SDK app runs Berit as a standalone process. Inherits your
+        <code>claude</code> auth — no separate API key.
+      </p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-header-title">terminal</span>
+          <div class="code-dots">
+            <div class="code-dot" style="background:#e05a5a"></div>
+            <div class="code-dot" style="background:#d4a843"></div>
+            <div class="code-dot" style="background:#5ab878"></div>
+          </div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># From your project</span><br>
+<span class="c-kw">cd</span> <span class="c-str">/path/to/your-project</span><br><br>
+<span class="c-kw">node</span> <span class="c-dim">--import tsx/esm \</span><br>
+<span class="c-dim">  /path/to/berit-team/src/index.ts \</span><br>
+<span class="c-str">  "Review the entire auth flow"</span><br><br>
+<span class="c-comment"># Or via npm script</span><br>
+<span class="c-kw">npm</span> <span class="c-dim">run berit --</span> <span class="c-str">"New feature: export"</span><br><br>
+<span class="c-comment"># Cost shown after run</span><br>
+<span class="c-dim">Cost: $0.87</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Examples -->
+  <div class="section-label reveal" style="margin-top:72px">Examples</div>
+  <div class="examples-list reveal reveal-d1">
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit</span> Build a complete invoice module with PDF export</div>
+      <div class="example-who">Anna → Gunnar → Torsten → Sigrid + Pelle → Ingrid → Erik</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:ingrid</span> Review supabase/migrations/ for security risks</div>
+      <div class="example-who">Ingrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:astrid</span> UX review of the onboarding flow</div>
+      <div class="example-who">Astrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:torsten</span> Design schema for a notifications system</div>
+      <div class="example-who">Torsten</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:erik</span> Write API documentation for edge functions</div>
+      <div class="example-who">Erik</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:maja</span> Define measurement plan for new dashboard feature</div>
+      <div class="example-who">Maja</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="divider"></div>
+<div class="cta-section">
+  <div class="section-label reveal" style="text-align:center">Ready?</div>
+  <h2 class="reveal reveal-d1">let the team<br><strong>work</strong></h2>
+  <p class="reveal reveal-d2">Run your first assignment directly from Claude Code.</p>
+  <div class="hero-actions reveal reveal-d3">
+    <a href="#use" class="btn-primary">Start your first assignment</a>
+    <a href="https://github.com/anthropics/claude-agent-sdk-typescript" class="btn-secondary" target="_blank">SDK documentation</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">Berit-team</div>
+    <div class="footer-note">agent-sdk v0.2.114 · claude-opus-4-7 + claude-sonnet-4-6</div>
+  </div>
+  <div class="footer-links">
+    <a href="arkitektur.html" class="footer-link">Architecture</a>
+    <a href="https://github.com/anthropics/claude-agent-sdk-typescript" class="footer-link" target="_blank" rel="noopener">SDK docs</a>
+    <a href="index.html" class="footer-link">Svenska</a>
+  </div>
+</footer>
+
+<button class="back-top" id="back-top" aria-label="Back to top" title="Back to top">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<script>
+  // Scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Workflow line animation
+  const workflowLine = document.querySelector('.workflow-line');
+  const workflowSection = document.querySelector('.workflow-wrap');
+  if (workflowLine && workflowSection) {
+    const lineObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          workflowLine.style.transition = 'height 2s ease';
+          workflowLine.style.background = 'linear-gradient(to bottom, var(--accent), transparent)';
+        }
+      });
+    }, { threshold: 0.1 });
+    lineObs.observe(workflowSection);
+  }
+
+  // Stagger team cards
+  const teamCards = document.querySelectorAll('.team-card');
+  const teamObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        teamCards.forEach((card, i) => setTimeout(() => { card.style.opacity = '1'; }, i * 40));
+        teamObs.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+  if (teamCards.length) {
+    teamCards.forEach(c => { c.style.opacity = '0'; });
+    teamObs.observe(teamCards[0]);
+  }
+
+  // Theme toggle with aria-pressed
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    const applyTheme = (light) => {
+      themeToggle.setAttribute('aria-pressed', light ? 'true' : 'false');
+      themeToggle.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+    };
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'light');
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('berit-theme', 'dark'); } catch (ex) {}
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        try { localStorage.setItem('berit-theme', 'light'); } catch (ex) {}
+      }
+      applyTheme(!isLight);
+    });
+  }
+
+  // Smooth nav active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+    });
+  }, { passive: true });
+
+  // Copy buttons
+  document.querySelectorAll('.code-block').forEach(block => {
+    const header = block.querySelector('.code-header');
+    const body = block.querySelector('.code-body');
+    if (!header || !body) return;
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.textContent = 'copy';
+    btn.addEventListener('click', () => {
+      const text = (body.innerText || body.textContent || '').replace(/
+{3,}/g, '
+
+').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.textContent = 'copied ✓';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = 'copy';
+        }, 1800);
+      }).catch(() => {});
+    });
+    header.appendChild(btn);
+  });
+
+  // Back to top
+  const backTop = document.getElementById('back-top');
+  if (backTop) {
+    window.addEventListener('scroll', () => {
+      backTop.classList.toggle('visible', window.scrollY > 600);
+    }, { passive: true });
+    backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  // Language toggle: preserve hash
+  document.querySelectorAll('a.lang-btn').forEach(link => {
+    link.addEventListener('click', e => {
+      const hash = window.location.hash;
+      if (hash) {
+        e.preventDefault();
+        window.location.href = link.href.split('#')[0] + hash;
+      }
+    });
+  });
+</script>
+</body>
+</html>

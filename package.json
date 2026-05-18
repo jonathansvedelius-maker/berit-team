@@ -1,0 +1,25 @@
+{
+  "name": "berit-team",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Berit — Swedish product team as a Claude Agent SDK application",
+  "bin": {
+    "berit": "bin/berit.js"
+  },
+  "scripts": {
+    "start": "node --import tsx/esm src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "latest"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "@types/node": "^22.10.7"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
