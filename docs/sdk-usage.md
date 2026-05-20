@@ -69,7 +69,7 @@ Windows — Git Bash eller WSL (POSIX-skal):
 
 ```bash
 node --import tsx/esm \
-  /c/Users/svede/projects/berit-team/src/index.ts \
+  /c/Users/<user>/projects/berit-team/src/index.ts \
   "Granska hela auth-flödet"
 ```
 
@@ -77,11 +77,11 @@ Windows — PowerShell (default i Windows 11). Backslash `\` fungerar **inte** s
 
 ```powershell
 # Enradsvariant (enklast, rekommenderas)
-node --import tsx/esm 'C:\Users\svede\projects\berit-team\src\index.ts' "Granska hela auth-flödet"
+node --import tsx/esm 'C:\Users\<user>\projects\berit-team\src\index.ts' "Granska hela auth-flödet"
 
 # Flerradsvariant med backtick-kontinuation
 node --import tsx/esm `
-  'C:\Users\svede\projects\berit-team\src\index.ts' `
+  'C:\Users\<user>\projects\berit-team\src\index.ts' `
   "Granska hela auth-flödet"
 ```
 
