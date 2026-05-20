@@ -28,8 +28,26 @@ A multi-agent product team orchestrated by Berit. Each agent has a distinct role
 ## Components
 
 - **Skill** `berit-orchestrator` — Core orchestration logic, team roles, handoff protocol
+- **Skill** `requirements-review` / `test-scenario-generation` / `meeting-summary` / `risk-review` / `regression-test` — Task verbs any specialist can invoke
 - **Command** `/berit` — Entry point that activates Berit with an assignment
+- **Command** `/berit-start` — Session-start briefing from persistent memory (read-only)
+- **Command** `/berit-end` — Session-end ritual: promotes decisions into memory, writes recap
+
+## Operating Model
+
+The team runs under a one-page constitution and tiered decision authority. See:
+
+- [docs/constitution.md](docs/constitution.md) — hard rules and behavioral guidelines
+- [docs/decision-authority.md](docs/decision-authority.md) — per-agent tier table and approval format
+- [docs/file-routing.md](docs/file-routing.md) — where artifacts live (memory vs handoff vs outputs)
+- [docs/regression-tests.md](docs/regression-tests.md) — canonical prompts that gate version bumps
 
 ## How It Works
 
-Berit creates a `.context/handoff.md` file at the start of each assignment. Each agent reads this file before starting work and updates it when done. This ensures every agent knows what has been decided, built, and flagged by previous agents.
+Berit maintains memory across three layers:
+
+- **`memory/`** — persistent, cross-session (team context, decisions, open questions, feedback)
+- **`.context/handoff.md`** — working memory for one assignment
+- **`outputs/YYYY-MM-DD/`** — dated deliverables (specs, reviews, summaries, recaps)
+
+At the start of each assignment Berit creates `.context/handoff.md` with the goals and constraints. Each agent reads it before working and updates it when done. At session end, `/berit-end` promotes decisions and open questions into `memory/` so the next session starts informed.
