@@ -32,24 +32,24 @@ Berit-teamet använder Claude Agent SDK:n, som ärver OAuth-tokenen från `claud
 claude --version
 ```
 
-## Permission mode — körningen är interaktiv som default
+## Permission mode — fil-edits tillåts, Bash frågar
 
-`src/index.ts` sätter `permissionMode: "default"`. Det betyder att SDK:n frågar **interaktivt** innan agenterna kör destructive tools (`Write`, `Edit`, `Bash` som modifierar state, m.fl.). Prompten ritas ut i terminalen och väntar på ditt svar.
+`src/index.ts` sätter `permissionMode: "acceptEdits"`. Det betyder att fil-edits (`Write`, `Edit`) tillåts automatiskt, men SDK:n frågar fortfarande **interaktivt** innan agenterna kör `Bash` och liknande. Prompten ritas ut i terminalen och väntar på ditt svar.
 
-Det här är en **tyst fälla** i icke-interaktiva miljöer:
+Bash-prompten är en **tyst fälla** i icke-interaktiva miljöer:
 
 - **CI (GitHub Actions, GitLab, Jenkins):** ingen TTY finns, prompten skrivs aldrig ut, men körningen blockerar tills jobbet time:ar ut.
 - **Bakgrundsprocesser (`nohup`, `&`, `pm2`, Docker utan `-it`):** samma sak — tyst hängning.
-- **Interaktiv terminal:** fungerar som väntat, men avbryter ditt flöde varje gång ett tool ska skriva.
+- **Interaktiv terminal:** fungerar som väntat, men avbryter ditt flöde när ett Bash-kommando ska köras.
 
-SDK:n har två icke-interaktiva alternativ:
+Övriga modes:
 
 | Mode | Effekt |
 |------|--------|
-| `"acceptEdits"` | Tillåter alla fil-edits automatiskt, men frågar fortfarande för `Bash` och liknande. Rimligt för dokumentations- och granskningspipelines. |
+| `"default"` | Frågar interaktivt även för fil-edits. Säkrast, men avbryter ofta. |
 | `"bypassPermissions"` | Tillåter allt utan att fråga. Kör bara mot repos där du accepterar att agenterna skriver fritt. |
 
-**Viktigt:** den här appen hårdkodar `"default"` på `src/index.ts:19`. Byt läge genom att antingen fork:a `src/index.ts` och ändra raden, eller skriv en egen wrapper som anropar `query()` med ditt valda mode. Det finns i nuläget ingen flagga eller miljövariabel som styr det utifrån.
+**Viktigt:** den här appen hårdkodar `"acceptEdits"` på `src/index.ts:19`. Byt läge genom att antingen fork:a `src/index.ts` och ändra raden, eller skriv en egen wrapper som anropar `query()` med ditt valda mode. Det finns i nuläget ingen flagga eller miljövariabel som styr det utifrån.
 
 ## Användning från ett annat projekt
 
@@ -153,7 +153,7 @@ Prompten skickas via `process.argv` — allt efter `--` (npm) respektive scriptn
 
 ## CI — GitHub Actions
 
-> **Obs:** Berit körs med `permissionMode: "default"` och hänger på interaktiv prompt i CI om den försöker köra ett destructive tool. Sätt `ANTHROPIC_API_KEY` och ändra till `"bypassPermissions"` (eller `"acceptEdits"`) i en fork av `src/index.ts` — se [Permission mode](#permission-mode--körningen-är-interaktiv-som-default) ovan — eller acceptera att körningen kräver TTY.
+> **Obs:** Berit körs med `permissionMode: "acceptEdits"` och hänger på interaktiv prompt i CI om den försöker köra `Bash`. Sätt `ANTHROPIC_API_KEY` och ändra till `"bypassPermissions"` i en fork av `src/index.ts` — se [Permission mode](#permission-mode--fil-edits-tillåts-bash-frågar) ovan — eller acceptera att körningen kräver TTY.
 
 Minimalt workflow-steg (lägg in i ditt befintliga workflow):
 

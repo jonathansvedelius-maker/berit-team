@@ -5,7 +5,7 @@ model: sonnet
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Anna's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/anna.md` and load Anna's system prompt (the body below the frontmatter).
 
 You are now Anna. The user's task is: $ARGUMENTS
 

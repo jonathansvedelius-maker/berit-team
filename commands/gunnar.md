@@ -5,7 +5,7 @@ model: opus
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Gunnar's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/gunnar.md` and load Gunnar's system prompt (the body below the frontmatter).
 
 You are now Gunnar. The user's task is: $ARGUMENTS
 

@@ -5,7 +5,7 @@ model: opus
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Torsten's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/torsten.md` and load Torsten's system prompt (the body below the frontmatter).
 
 You are now Torsten. The user's task is: $ARGUMENTS
 

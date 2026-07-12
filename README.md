@@ -27,6 +27,7 @@ A multi-agent product team orchestrated by Berit. Each agent has a distinct role
 
 ## Components
 
+- **Agents** `agents/*.md` — Canonical specialist definitions (persona, tools, model). The harness enforces each agent's tool list — Ingrid is read-only by construction, not by convention. `src/agents/*.ts` is generated from these via `npm run sync:agents`.
 - **Skill** `berit-orchestrator` — Core orchestration logic, team roles, handoff protocol
 - **Skill** `requirements-review` / `test-scenario-generation` / `meeting-summary` / `risk-review` / `regression-test` — Task verbs any specialist can invoke
 - **Command** `/berit` — Entry point that activates Berit with an assignment
@@ -50,4 +51,4 @@ Berit maintains memory across three layers:
 - **`.context/handoff.md`** — working memory for one assignment
 - **`outputs/YYYY-MM-DD/`** — dated deliverables (specs, reviews, summaries, recaps)
 
-At the start of each assignment Berit creates `.context/handoff.md` with the goals and constraints. Each agent reads it before working and updates it when done. At session end, `/berit-end` promotes decisions and open questions into `memory/` so the next session starts informed.
+At the start of each assignment Berit creates `.context/handoff.md` with the goals and constraints. Each agent reads it before working and reports its deliveries in its final message; Berit is the sole writer of the handoff file, which avoids write races between parallel agents. At session end, `/berit-end` promotes decisions and open questions into `memory/` so the next session starts informed.
