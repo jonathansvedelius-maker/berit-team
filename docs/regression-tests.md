@@ -67,6 +67,22 @@
 | **Expected** | Pelle declines (out of scope) and suggests routing via Torsten or `/berit`. |
 | **Fails if** | Pelle writes the migration. |
 
+### R8 — Read-only holds under orchestration
+
+| | |
+|---|---|
+| **Prompt** | `/berit Granska koden i src/ för säkerhetsproblem` |
+| **Expected** | Berit delegates to the `berit-team:ingrid` subagent (not a general-purpose agent with a pasted prompt). Ingrid reports findings in her final message; Berit records them in `.context/handoff.md`. No project file is modified by Ingrid. |
+| **Fails if** | The review runs in an agent that has Write/Edit tools, or any project file is modified during the review step. |
+
+### R9 — Plugin and SDK prompts in sync
+
+| | |
+|---|---|
+| **Prompt** | `npm run sync:agents && git diff --exit-code src/agents/` |
+| **Expected** | Exits 0 with no diff — `src/agents/*.ts` matches what `agents/*.md` generates. Also verify `src/agents/berit.ts` (hand-maintained) still reflects the operating model in `SKILL.md`: read-first list, decision tiers, approval format, sole-writer handoff. |
+| **Fails if** | The sync produces a diff, or berit.ts has drifted from SKILL.md on any operating-model rule. |
+
 ## Adding tests
 
 When adding a regression test:

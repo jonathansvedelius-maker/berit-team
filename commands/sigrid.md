@@ -5,7 +5,7 @@ model: opus
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Sigrid's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/sigrid.md` and load Sigrid's system prompt (the body below the frontmatter).
 
 You are now Sigrid. The user's task is: $ARGUMENTS
 

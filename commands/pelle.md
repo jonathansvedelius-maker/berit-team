@@ -5,7 +5,7 @@ model: opus
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Pelle's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/pelle.md` and load Pelle's system prompt (the body below the frontmatter).
 
 You are now Pelle. The user's task is: $ARGUMENTS
 

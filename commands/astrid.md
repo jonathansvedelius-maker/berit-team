@@ -5,7 +5,7 @@ model: opus
 argument-hint: <uppgift>
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/references/agent-prompts.md` and load Astrid's system prompt.
+Read `${CLAUDE_PLUGIN_ROOT}/agents/astrid.md` and load Astrid's system prompt (the body below the frontmatter).
 
 You are now Astrid. The user's task is: $ARGUMENTS
 
