@@ -1040,6 +1040,7 @@
     <li><a href="#the-team">the team</a></li>
     <li><a href="#prompts">prompts</a></li>
     <li><a href="#workflow">workflow</a></li>
+    <li><a href="#operating-model">memory</a></li>
     <li><a href="#use">use</a></li>
   </ul>
   <div class="nav-right">
@@ -1751,6 +1752,86 @@ Write in Swedish unless the documentation targets an international audience.
 
 <div class="divider"></div>
 
+<!-- OPERATING MODEL (v0.3.0) -->
+<section id="operating-model">
+  <div class="section-label reveal">Operating model · v0.3.0</div>
+  <h2 class="reveal reveal-d1">the team<br><strong>remembers</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    v0.3.0 lifts Berit from a delegation loop to an operating layer that survives
+    across sessions. A constitution codifies the rules, decision authority clarifies
+    who may decide what, and persistent memory keeps context over time.
+  </p>
+
+  <div class="compare-grid reveal reveal-d3">
+    <div class="compare-card">
+      <div class="compare-badge badge-skill">memory/ · persistent</div>
+      <h3>Three layers of memory</h3>
+      <p>
+        Previously Berit had no idea about yesterday's decisions. Now the context
+        persists in typed files that <code>/berit-start</code> reads each session.
+      </p>
+      <ul class="compare-list">
+        <li><code>memory/MEMORY.md</code> — index of everything persistent</li>
+        <li><code>team_context.md</code>, <code>project_context.md</code> — who, what, why</li>
+        <li><code>decisions.md</code> — dated decisions with rationale</li>
+        <li><code>open_questions.md</code>, <code>waiting_on_team.md</code> — unresolved items</li>
+        <li><code>feedback.md</code> — validated approaches + corrections</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit-start
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-badge badge-agent">docs/ · constitution</div>
+      <h3>Rules &amp; decision authority</h3>
+      <p>
+        Four documents govern how the team is allowed to act. The constitution is
+        read first every session; the decision table determines what needs approval.
+      </p>
+      <ul class="compare-list">
+        <li><code>docs/constitution.md</code> — hard rules, one page</li>
+        <li><code>docs/decision-authority.md</code> — per-agent tier table</li>
+        <li><code>docs/file-routing.md</code> — where everything lives</li>
+        <li><code>docs/regression-tests.md</code> — gate tests for version bumps</li>
+        <li><code>outputs/YYYY-MM-DD/</code> — dated deliverables</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit-end
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label reveal" style="margin-top:72px">Task-verb skills</div>
+  <p class="section-intro reveal reveal-d1">
+    Five composable skills any specialist can invoke.
+    Separated from agent identity — Berit picks the right verb for the right specialist.
+  </p>
+  <div class="examples-list reveal reveal-d2">
+    <div class="example-row">
+      <div class="example-cmd"><span>requirements-review</span> Reviews requirements: coverage, testability, unclear dependencies</div>
+      <div class="example-who">Anna · Gunnar · Ingrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>test-scenario-generation</span> Derives test scenarios (positive, negative, edge) from requirements</div>
+      <div class="example-who">Ingrid · Pelle · Sigrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>meeting-summary</span> Meeting log → structured decision list + action items</div>
+      <div class="example-who">Berit · Erik · Gunnar</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>risk-review</span> Risk walkthrough: security, ops, delivery, dependencies</div>
+      <div class="example-who">Ingrid · Sigrid · Torsten</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>regression-test</span> Runs canonical prompts before version bumps</div>
+      <div class="example-who">Berit · Ingrid</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- USE -->
 <section id="use">
   <div class="section-label reveal">Get started</div>
@@ -1824,6 +1905,10 @@ Write in Swedish unless the documentation targets an international audience.
   <div class="section-label reveal" style="margin-top:72px">Examples</div>
   <div class="examples-list reveal reveal-d1">
     <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit-start</span> Read the memory — what's waiting on what?</div>
+      <div class="example-who">Read-only briefing</div>
+    </div>
+    <div class="example-row">
       <div class="example-cmd"><span>/berit-team:berit</span> Build a complete invoice module with PDF export</div>
       <div class="example-who">Anna → Gunnar → Torsten → Sigrid + Pelle → Ingrid → Erik</div>
     </div>
@@ -1846,6 +1931,10 @@ Write in Swedish unless the documentation targets an international audience.
     <div class="example-row">
       <div class="example-cmd"><span>/berit-team:maja</span> Define measurement plan for new dashboard feature</div>
       <div class="example-who">Maja</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit-end</span> Close the session — promote decisions to memory</div>
+      <div class="example-who">Recap + memory promotion</div>
     </div>
   </div>
 </section>

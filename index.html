@@ -1055,6 +1055,7 @@
     <li><a href="#teamet">teamet</a></li>
     <li><a href="#instruktioner">prompts</a></li>
     <li><a href="#flödet">flödet</a></li>
+    <li><a href="#operativ-modell">minne</a></li>
     <li><a href="#anropa">anropa</a></li>
   </ul>
   <div class="nav-right">
@@ -1765,6 +1766,86 @@ Skriv på svenska om inte dokumentationen riktar sig till en internationell publ
 
 <div class="divider"></div>
 
+<!-- OPERATIV MODELL (v0.3.0) -->
+<section id="operativ-modell">
+  <div class="section-label reveal">Operativ modell · v0.3.0</div>
+  <h2 class="reveal reveal-d1">teamet<br><strong>kommer ihåg</strong></h2>
+  <p class="section-intro reveal reveal-d2">
+    v0.3.0 lyfter Berit från en delegeringsloop till ett operativt lager som överlever
+    mellan sessioner. En konstitution kodifierar reglerna, beslutsbefogenheter klargör
+    vem som får besluta vad, och ett persistent minne håller kontext över tid.
+  </p>
+
+  <div class="compare-grid reveal reveal-d3">
+    <div class="compare-card">
+      <div class="compare-badge badge-skill">memory/ · persistent</div>
+      <h3>Tre lager av minne</h3>
+      <p>
+        Tidigare hade Berit ingen aning om beslut från igår. Nu finns kontexten kvar
+        i typade filer som <code>/berit-start</code> läser vid varje session.
+      </p>
+      <ul class="compare-list">
+        <li><code>memory/MEMORY.md</code> — index över allt persistent minne</li>
+        <li><code>team_context.md</code>, <code>project_context.md</code> — vem, vad, varför</li>
+        <li><code>decisions.md</code> — daterade beslut med rationale</li>
+        <li><code>open_questions.md</code>, <code>waiting_on_team.md</code> — olösta items</li>
+        <li><code>feedback.md</code> — validerade angreppssätt + korrigeringar</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit-start
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-badge badge-agent">docs/ · konstitution</div>
+      <h3>Regler &amp; beslutsbefogenheter</h3>
+      <p>
+        Fyra dokument styr hur teamet får agera. Konstitutionen läses först
+        vid varje session, beslutstabellen avgör vad som kräver godkännande.
+      </p>
+      <ul class="compare-list">
+        <li><code>docs/constitution.md</code> — hårda regler, en sida</li>
+        <li><code>docs/decision-authority.md</code> — tier-tabell per agent</li>
+        <li><code>docs/file-routing.md</code> — var allt hör hemma</li>
+        <li><code>docs/regression-tests.md</code> — gate-tester för version bumps</li>
+        <li><code>outputs/YYYY-MM-DD/</code> — daterade leveranser</li>
+      </ul>
+      <div class="compare-cmd">
+        <span>$ </span>/berit-team:berit-end
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label reveal" style="margin-top:72px">Task-verb-skills</div>
+  <p class="section-intro reveal reveal-d1">
+    Fem komponerbara skills som vilken specialist som helst kan anropa.
+    Separerade från agentidentitet — Berit väljer rätt verb för rätt specialist.
+  </p>
+  <div class="examples-list reveal reveal-d2">
+    <div class="example-row">
+      <div class="example-cmd"><span>requirements-review</span> Granskar krav: täckning, testbarhet, oklara beroenden</div>
+      <div class="example-who">Anna · Gunnar · Ingrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>test-scenario-generation</span> Härleder testscenarier (positiva, negativa, edge) från krav</div>
+      <div class="example-who">Ingrid · Pelle · Sigrid</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>meeting-summary</span> Möteslogg → strukturerad beslutslista + action items</div>
+      <div class="example-who">Berit · Erik · Gunnar</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>risk-review</span> Risk-genomgång: säkerhet, drift, leverans, beroenden</div>
+      <div class="example-who">Ingrid · Sigrid · Torsten</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>regression-test</span> Kör kanoniska prompts före version bump</div>
+      <div class="example-who">Berit · Ingrid</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- ANROPA -->
 <section id="anropa">
   <div class="section-label reveal">Kom igång</div>
@@ -1838,6 +1919,10 @@ Skriv på svenska om inte dokumentationen riktar sig till en internationell publ
   <div class="section-label reveal" style="margin-top:72px">Exempel</div>
   <div class="examples-list reveal reveal-d1">
     <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit-start</span> Läs minnet — vad väntar på vad?</div>
+      <div class="example-who">Read-only briefing</div>
+    </div>
+    <div class="example-row">
       <div class="example-cmd"><span>/berit-team:berit</span> Bygg en komplett faktura-modul med PDF-export</div>
       <div class="example-who">Anna → Gunnar → Torsten → Sigrid + Pelle → Ingrid → Erik</div>
     </div>
@@ -1860,6 +1945,10 @@ Skriv på svenska om inte dokumentationen riktar sig till en internationell publ
     <div class="example-row">
       <div class="example-cmd"><span>/berit-team:maja</span> Definiera mätplan för ny dashboard-feature</div>
       <div class="example-who">Maja</div>
+    </div>
+    <div class="example-row">
+      <div class="example-cmd"><span>/berit-team:berit-end</span> Stäng sessionen — befordra beslut till minnet</div>
+      <div class="example-who">Recap + memory promotion</div>
     </div>
   </div>
 </section>
