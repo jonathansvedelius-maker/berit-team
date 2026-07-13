@@ -376,7 +376,7 @@
 <div class="container" id="main-content">
 
   <header>
-    <div class="label" data-i18n="header.label">Claude Cowork Plugin — v0.2.0</div>
+    <div class="label" data-i18n="header.label">Claude Cowork Plugin — v0.3.0</div>
     <h1>berit-team</h1>
     <p data-i18n="header.desc">Multiagent-plugin som simulerar ett svenskt produktteam. En orchestrator (Berit) delegerar uppgifter till nio specialistagenter via Claude Agent SDK:ns subagent-system.</p>
   </header>
@@ -385,27 +385,39 @@
   <section>
     <div class="section-num" data-i18n="s01.num">01 — Filstruktur</div>
     <h2 data-i18n="s01.title">Plugin-katalog</h2>
-    <p data-i18n="s01.desc">Plugin:et lever som en remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All konfiguration sker genom tre typer av filer: plugin-manifest, skill-definition och command-definitions.</p>
+    <p data-i18n="s01.desc">Plugin:et lever som en remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All konfiguration sker genom fyra typer av filer: plugin-manifest, agent-definitioner, skill-definition och command-definitions.</p>
     <div class="spacer"></div>
     <div class="file-tree"><span class="dir">berit-team/</span>
 ├── <span class="dir">.claude-plugin/</span>
 │   └── <span class="file">plugin.json</span>                        <span class="comment" data-i18n="s01.c1"># manifest: namn, version, beskrivning</span>
+├── <span class="new">agents/</span>                              <span class="comment" data-i18n="s01.c3"># anna.md..torsten.md — frontmatter (name, description, tools, model) + system prompt</span>
 ├── <span class="dir">skills/</span>
-│   └── <span class="dir">berit-orchestrator/</span>
-│       ├── <span class="file">SKILL.md</span>                       <span class="comment" data-i18n="s01.c2"># orchestrator-instruktioner, workflow, handoff-protokoll</span>
-│       └── <span class="dir">references/</span>
-│           └── <span class="file">agent-prompts.md</span>           <span class="comment" data-i18n="s01.c3"># system prompts för alla 9 agenter</span>
+│   ├── <span class="dir">berit-orchestrator/</span>
+│   │   └── <span class="file">SKILL.md</span>                       <span class="comment" data-i18n="s01.c2"># orchestrator-instruktioner, workflow, handoff-protokoll</span>
+│   ├── <span class="new">requirements-review/</span>              <span class="comment" data-i18n="s01.c14"># task-verb: kravgranskning</span>
+│   ├── <span class="new">test-scenario-generation/</span>         <span class="comment" data-i18n="s01.c15"># task-verb: testscenarier från krav</span>
+│   ├── <span class="new">meeting-summary/</span>                  <span class="comment" data-i18n="s01.c16"># task-verb: möteslogg → beslut + actions</span>
+│   ├── <span class="new">risk-review/</span>                      <span class="comment" data-i18n="s01.c17"># task-verb: risk-genomgång</span>
+│   └── <span class="new">regression-test/</span>                  <span class="comment" data-i18n="s01.c18"># task-verb: kör kanoniska prompts före version-bump</span>
 ├── <span class="dir">commands/</span>
 │   ├── <span class="file">berit.md</span>                           <span class="comment" data-i18n="s01.c4"># /berit — entrypoint, startar orchestratorn</span>
-│   ├── <span class="new">anna.md</span>                            <span class="comment" data-i18n="s01.c5"># /anna — business analyst       (sonnet)</span>
+│   ├── <span class="new">berit-start.md</span>                     <span class="comment" data-i18n="s01.c19"># /berit-start — läs minne, briefing (read-only)</span>
+│   ├── <span class="new">berit-end.md</span>                       <span class="comment" data-i18n="s01.c20"># /berit-end — recap, befordrar beslut till minne</span>
+│   ├── <span class="file">anna.md</span>                            <span class="comment" data-i18n="s01.c5"># /anna — business analyst       (sonnet)</span>
 │   ├── <span class="file">gunnar.md</span>                          <span class="comment" data-i18n="s01.c6"># /gunnar — produkt &amp; spec       (opus)</span>
 │   ├── <span class="file">astrid.md</span>                          <span class="comment" data-i18n="s01.c7"># /astrid — UX &amp; design          (opus)</span>
-│   ├── <span class="new">maja.md</span>                            <span class="comment" data-i18n="s01.c8"># /maja — data &amp; analytics       (sonnet)</span>
+│   ├── <span class="file">maja.md</span>                            <span class="comment" data-i18n="s01.c8"># /maja — data &amp; analytics       (sonnet)</span>
 │   ├── <span class="file">pelle.md</span>                           <span class="comment" data-i18n="s01.c9"># /pelle — frontend              (opus)</span>
 │   ├── <span class="file">sigrid.md</span>                          <span class="comment" data-i18n="s01.c10"># /sigrid — backend              (opus)</span>
 │   ├── <span class="file">torsten.md</span>                         <span class="comment" data-i18n="s01.c11"># /torsten — infra &amp; DB          (opus)</span>
 │   ├── <span class="file">ingrid.md</span>                          <span class="comment" data-i18n="s01.c12"># /ingrid — QA (read-only)       (opus)</span>
-│   └── <span class="new">erik.md</span>                            <span class="comment" data-i18n="s01.c13"># /erik — dokumentation          (sonnet)</span>
+│   └── <span class="file">erik.md</span>                            <span class="comment" data-i18n="s01.c13"># /erik — dokumentation          (sonnet)</span>
+├── <span class="new">docs/</span>                                <span class="comment" data-i18n="s01.c21"># constitution, decision-authority, file-routing, regression-tests</span>
+├── <span class="new">memory/</span>                              <span class="comment" data-i18n="s01.c22"># persistent minne mellan sessioner — MEMORY.md + typade filer</span>
+├── <span class="new">outputs/</span>                             <span class="comment" data-i18n="s01.c23"># daterade leveranser: outputs/YYYY-MM-DD/</span>
+├── <span class="new">scripts/</span>
+│   └── <span class="new">sync-agents.mjs</span>                    <span class="comment" data-i18n="s01.c24"># genererar src/agents/*.ts från agents/*.md (npm run sync:agents)</span>
+├── <span class="new">src/agents/</span>                          <span class="comment" data-i18n="s01.c25"># genererade SDK-agentmoduler — rör aldrig för hand</span>
 └── <span class="file">README.md</span></div>
   </section>
 
@@ -419,7 +431,7 @@
       <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div>.claude-plugin/plugin.json</div>
 <pre>{
   <span class="str">"name"</span>: <span class="str">"berit-team"</span>,
-  <span class="str">"version"</span>: <span class="str">"0.2.0"</span>,
+  <span class="str">"version"</span>: <span class="str">"0.3.0"</span>,
   <span class="str">"description"</span>: <span class="str">"Swedish product team orchestrated by Berit..."</span>,
   <span class="str">"author"</span>: { <span class="str">"name"</span>: <span class="str">"Jonathan Svedelius"</span> },
   <span class="str">"keywords"</span>: [<span class="str">"orchestrator"</span>, <span class="str">"multi-agent"</span>, <span class="str">"product-team"</span>, <span class="str">"swedish"</span>]
@@ -436,7 +448,7 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
       <div class="principle-card" style="border-left: 2px solid var(--accent);">
         <h4 style="color:var(--accent)" data-i18n="s03.card1.title">/berit &lt;uppdrag&gt;</h4>
-        <p data-i18n="s03.card1.desc">Laddar <code>berit-orchestrator</code> skill + alla agent-prompts. Skapar handoff.md och delegerar till rätt agenter i sekvens. Model: <strong style="color:var(--text)">opus</strong>.</p>
+        <p data-i18n="s03.card1.desc">Laddar <code>berit-orchestrator</code>-skillen. Skapar handoff.md och delegerar till rätt agenter i sekvens via <code>subagent_type</code> — harnessen laddar varje agents persona, verktyg och modell. Model: <strong style="color:var(--text)">opus</strong>.</p>
       </div>
       <div class="principle-card" style="border-left: 2px solid var(--text-dim);">
         <h4 style="color:var(--text-muted)" data-i18n="s03.card2.title">/agent &lt;uppgift&gt;</h4>
@@ -579,7 +591,7 @@
   <section>
     <div class="section-num" data-i18n="s05.num">05 — System prompts</div>
     <h2 data-i18n="s05.title">Fullständiga agentinstruktioner</h2>
-    <p data-i18n="s05.desc">Dessa prompts lever i <code style="color:var(--accent)">references/agent-prompts.md</code> och injiceras ordagrant i varje subagent-anrop. Handoff-blocket i slutet av varje prompt är identiskt — det tvingar agenten att läsa befintliga beslut och logga sina egna.</p>
+    <p data-i18n="s05.desc">Dessa prompts lever i <code style="color:var(--accent)">agents/*.md</code> — en fil per agent med frontmatter (name, description, tools, model) och prompten som body. Harnessen applicerar dem automatiskt när Berit delegerar via <code>subagent_type</code>. Handoff-blocket i slutet av varje prompt följer samma mönster — det tvingar agenten att läsa befintliga beslut och rapportera sina leveranser i slutmeddelandet.</p>
     <div class="spacer"></div>
 
     <details class="prompt-details">
@@ -607,11 +619,13 @@ Skriv på svenska. Var konkret, strukturerad, och led
 med det viktigaste.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -633,11 +647,13 @@ För varje feature du specificerar, inkludera:
 Skriv på svenska. Var konkret, undvik fluff. Led med slutsatsen.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -659,11 +675,13 @@ I B2B-kontext: prioritera tillit, snabbhet och operationell tydlighet.
 Skriv på svenska. Var direkt och konstruktiv.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -692,11 +710,13 @@ Principer:
 Skriv på svenska. Var precis med definitioner.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -720,11 +740,13 @@ Skriv produktionsredo kod. Kommentera bara det som inte
 är uppenbart.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -748,11 +770,13 @@ Principer:
 Skriv säker, underhållbar kod. Flagga säkerhetsrisker explicit.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -774,11 +798,13 @@ Principer:
 Skriv SQL som är tydligt, korrekt och prestandaoptimerat.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -789,10 +815,9 @@ Skriv SQL som är tydligt, korrekt och prestandaoptimerat.
       </summary>
       <div class="code-block"><pre data-i18n="s05.ingrid.prompt">Du är Ingrid, en senior QA-ingenjör och säkerhetsgranskare.
 
-Du har medvetet <span class="kw">INGEN skrivbehörighet</span> för projektfiler.
-Du granskar och rapporterar.
-Du <span class="kw">FÅR</span> skriva till .context/handoff.md för att logga
-dina findings.
+Du har medvetet <span class="kw">INGA skrivverktyg</span>.
+Du granskar och rapporterar — du modifierar
+aldrig projektfiler.
 
 Fokusera på:
 <span class="fn">- Säkerhet:</span> injection, auth-bypass, dataläckage, saknad validering
@@ -808,11 +833,10 @@ Strukturera din rapport som:
 Var saklig och specifik. Inkludera filreferenser och radnummer.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
-2. Bygg vidare på beslut och kontrakt som redan finns
-   — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
+2. Granska mot beslut och kontrakt som redan finns.
+3. Rapportera dina findings i ditt slutmeddelande
+   — Berit eller användaren för in dem i handoff.md.</span></pre></div>
     </details>
 
     <details class="prompt-details">
@@ -845,11 +869,13 @@ Skriv på svenska om inte dokumentationen riktar sig till
 en internationell publik.
 
 <span class="kw">## Handoff</span>
-<span class="cm">1. LÄS .context/handoff.md innan du börjar.
+<span class="cm">1. LÄS .context/handoff.md innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns
    — uppfinn inte nytt som krockar.
-3. När du är klar, LÄGG TILL i handoff.md: vad du
-   levererade, designval, och beroenden för nästa steg.</span></pre></div>
+3. När du är klar: rapportera i ditt slutmeddelande vad
+   du levererade, designval, och beroenden för nästa steg.
+4. Skriv INTE i handoff.md som subagent under Berit
+   — hon är ensam skribent och för in dina leveranser.</span></pre></div>
     </details>
   </section>
 
@@ -857,7 +883,7 @@ en internationell publik.
   <section>
     <div class="section-num" data-i18n="s06.num">06 — Behörighetsmatris</div>
     <h2 data-i18n="s06.title">Verktyg per agent</h2>
-    <p data-i18n="s06.desc">Varje command-fil deklarerar <code style="color:var(--accent)">allowed-tools</code> i sin frontmatter. Ingrid saknar Write/Edit medvetet. Analytiker-roller (Anna, Gunnar, Astrid, Maja) saknar Edit och Bash — de producerar dokument, inte kod.</p>
+    <p data-i18n="s06.desc">Varje agentdefinition i <code style="color:var(--accent)">agents/*.md</code> deklarerar <code style="color:var(--accent)">tools</code> i sin frontmatter — harnessen upprätthåller restriktionerna, de är inte bara konvention. Command-filerna speglar samma lista via <code style="color:var(--accent)">allowed-tools</code>. Ingrid saknar Write/Edit medvetet. Analytiker-roller (Anna, Gunnar, Astrid, Maja) saknar Edit och Bash — de producerar dokument, inte kod.</p>
     <div class="spacer"></div>
     <div class="matrix-wrap">
       <table class="matrix-table">
@@ -885,7 +911,7 @@ en internationell publik.
   <section>
     <div class="section-num" data-i18n="s07.num">07 — Handoff-protokoll</div>
     <h2>.context/handoff.md</h2>
-    <p data-i18n="s07.desc">Kontinuiteten mellan agenter sker via en delad fil: <code style="color:var(--accent)">.context/handoff.md</code>. Berit skapar filen innan första delegering. Varje agent läser den innan den börjar och uppdaterar den när den är klar.</p>
+    <p data-i18n="s07.desc">Kontinuiteten mellan agenter sker via en delad fil: <code style="color:var(--accent)">.context/handoff.md</code>. Berit skapar filen innan första delegering och är dess <strong>enda skribent</strong>. Specialisterna läser den men skriver aldrig i den — de rapporterar leveranser och beslut i sitt slutmeddelande, och Berit för in dem. Det eliminerar skrivkrockar mellan parallella agenter.</p>
 
     <div class="code-block">
       <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s07.codeheader">.context/handoff.md — exakt format</span></div>
@@ -919,12 +945,12 @@ en internationell publik.
         <p data-i18n="s07.step1.desc">Innan första delegering fyller Berit i Uppdrag, mål och constraints.</p>
       </div>
       <div class="principle-card" style="border-top: 2px solid var(--green);">
-        <h4 data-i18n="s07.step2.title">Steg 2: Agenter läser + skriver</h4>
-        <p data-i18n="s07.step2.desc">Varje agent läser filen innan start. Lägger till sina beslut och leveranser när den är klar.</p>
+        <h4 data-i18n="s07.step2.title">Steg 2: Agenter läser + rapporterar</h4>
+        <p data-i18n="s07.step2.desc">Varje agent läser filen innan start. Rapporterar beslut och leveranser i sitt slutmeddelande — skriver aldrig själv i filen.</p>
       </div>
       <div class="principle-card" style="border-top: 2px solid var(--amber);">
-        <h4 data-i18n="s07.step3.title">Steg 3: Berit verifierar</h4>
-        <p data-i18n="s07.step3.desc">Efter varje agent läser Berit filen och kontrollerar att inga beslut krockar med tidigare steg.</p>
+        <h4 data-i18n="s07.step3.title">Steg 3: Berit för in + verifierar</h4>
+        <p data-i18n="s07.step3.desc">Efter varje agent för Berit in leveranserna och besluten i filen och kontrollerar att inget krockar med tidigare steg.</p>
       </div>
     </div>
   </section>
@@ -967,12 +993,13 @@ en internationell publik.
   <section>
     <div class="section-num" data-i18n="s09.num">09 — Delegering</div>
     <h2 data-i18n="s09.title">Hur Berit anropar en agent</h2>
-    <p data-i18n="s09.desc">Berit använder Agent-verktyget med agentens fulla system prompt (från <code style="color:var(--accent)">references/agent-prompts.md</code>), handoff-instruktion, specifik uppgift, relevanta filer och beroenden.</p>
+    <p data-i18n="s09.desc">Berit använder Agent-verktyget med <code style="color:var(--accent)">subagent_type: "berit-team:&lt;namn&gt;"</code> — harnessen applicerar agentens persona, verktygsrestriktioner och modell från <code style="color:var(--accent)">agents/*.md</code>. Delegeringsmeddelandet innehåller bara handoff-instruktion, specifik uppgift, relevanta filer och beroenden — aldrig inklistrade system prompts.</p>
     <div class="spacer"></div>
     <div class="code-block">
       <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s09.codeheader">Delegerings-template</span></div>
-<pre data-i18n="s09.code"><span class="cm">// 1. Agentens fulla system prompt injiceras</span>
-<span class="str">"Du är Sigrid, en senior backend-utvecklare..."</span>
+<pre data-i18n="s09.code"><span class="cm">// 1. Välj agent — harnessen laddar persona,
+//    verktyg och modell från agents/sigrid.md</span>
+<span class="fn">subagent_type</span>: <span class="str">"berit-team:sigrid"</span>
 
 <span class="cm">// 2. Handoff-instruktion</span>
 <span class="str">"Read .context/handoff.md first."</span>
@@ -986,9 +1013,8 @@ en internationell publik.
  Dependencies: Torstens schema (se handoff.md)
  Constraints: RLS måste vara aktivt"</span>
 
-<span class="cm">// 5. Handoff-uppdatering</span>
-<span class="str">"When done, update .context/handoff.md with your
- deliveries and decisions."</span></pre>
+<span class="cm">// 5. Efteråt: Sigrid rapporterar leveranser i sitt
+//    slutmeddelande — Berit för in dem i handoff.md</span></pre>
     </div>
   </section>
 
@@ -1006,8 +1032,8 @@ en internationell publik.
 <span class="fn">argument-hint</span>: <span class="str">&lt;uppgift&gt;</span>
 <span class="kw">---</span>
 
-Read <span class="str">`${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/
-references/agent-prompts.md`</span> and load Ingrid's system prompt.
+Read <span class="str">`${CLAUDE_PLUGIN_ROOT}/agents/ingrid.md`</span> and load
+Ingrid's system prompt (the body below the frontmatter).
 
 You are now Ingrid. The user's task is: <span class="fn">$ARGUMENTS</span>
 
@@ -1051,10 +1077,88 @@ You review and report only.</pre>
     </div>
   </section>
 
+  <!-- 12 Operating model (v0.3.0) -->
+  <section>
+    <div class="section-num" data-i18n="s12.num">12 — Operativ modell (v0.3.0)</div>
+    <h2 data-i18n="s12.title">Konstitution, beslut, minne</h2>
+    <p data-i18n="s12.desc">v0.3.0 lyfter teamet från en ren delegeringsloop till ett operativt lager som överlever mellan sessioner. Fyra <code style="color:var(--accent)">docs/</code>-filer kodifierar regler och beslutsrätt, <code style="color:var(--accent)">memory/</code> håller kontext över tid, och två kommandon ramar in varje session.</p>
+    <div class="spacer"></div>
+
+    <div class="principle-grid">
+      <div class="principle-card" style="border-top: 2px solid var(--accent);">
+        <h4 data-i18n="s12.card1.title">Konstitution</h4>
+        <p data-i18n="s12.card1.desc"><code>docs/constitution.md</code> samlar hårda regler: vad Berit får och inte får, hur specialister levererar, när handoff är obligatorisk. En sida — läses först vid varje session.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--orange);">
+        <h4 data-i18n="s12.card2.title">Beslutsbefogenheter</h4>
+        <p data-i18n="s12.card2.desc"><code>docs/decision-authority.md</code> definierar fyra tiers per agent: vad de får besluta själva, vad som kräver godkännande, vad som måste eskaleras till människa. Godkännandeformat är standardiserat.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--purple);">
+        <h4 data-i18n="s12.card3.title">Filplacering</h4>
+        <p data-i18n="s12.card3.desc"><code>docs/file-routing.md</code> ger en regelkarta: minne i <code>memory/</code>, arbets-kontext i <code>.context/handoff.md</code>, leveranser i <code>outputs/YYYY-MM-DD/</code>. Ingen tvekan om var något hör hemma.</p>
+      </div>
+      <div class="principle-card" style="border-top: 2px solid var(--green);">
+        <h4 data-i18n="s12.card4.title">Regressionstester</h4>
+        <p data-i18n="s12.card4.desc"><code>docs/regression-tests.md</code> listar kanoniska prompts som måste passera innan version bumps. Skill <code>regression-test</code> kör dem.</p>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <h3 data-i18n="s12.memory.title" style="font-size:18px;color:var(--text);margin-top:8px">Tre lager av minne</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div><span data-i18n="s12.memory.codeheader">Minnestopologi</span></div>
+<pre data-i18n="s12.memory.format"><span class="kw">memory/</span>                          <span class="cm"># persistent, mellan sessioner</span>
+├── <span class="fn">MEMORY.md</span>                    <span class="cm"># index — pekare till typade filer</span>
+├── <span class="fn">team_context.md</span>              <span class="cm"># roller, normer, ägarskap</span>
+├── <span class="fn">project_context.md</span>           <span class="cm"># aktiva projekt, mål, deadlines</span>
+├── <span class="fn">decisions.md</span>                 <span class="cm"># daterade beslut + rationale</span>
+├── <span class="fn">open_questions.md</span>            <span class="cm"># olösta items + ägare</span>
+├── <span class="fn">waiting_on_team.md</span>           <span class="cm"># blockerat på en människa</span>
+└── <span class="fn">feedback.md</span>                  <span class="cm"># validerade angreppssätt + korrigeringar</span>
+
+<span class="kw">.context/handoff.md</span>              <span class="cm"># working memory för ett uppdrag</span>
+<span class="kw">outputs/2026-05-20/</span>              <span class="cm"># daterade leveranser (specs, reviews, recaps)</span></pre>
+    </div>
+
+    <div class="spacer"></div>
+    <h3 data-i18n="s12.rituals.title" style="font-size:18px;color:var(--text);margin-top:8px">Sessionsritualer</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="principle-card" style="border-left: 2px solid var(--accent);">
+        <h4 style="color:var(--accent)" data-i18n="s12.rituals.start.title">/berit-start</h4>
+        <p data-i18n="s12.rituals.start.desc">Read-only briefing från <code>memory/</code>. Listar öppna frågor, väntar-på-team och senaste beslut innan något nytt körs. Skriver aldrig till minnet.</p>
+      </div>
+      <div class="principle-card" style="border-left: 2px solid var(--green);">
+        <h4 style="color:var(--green)" data-i18n="s12.rituals.end.title">/berit-end</h4>
+        <p data-i18n="s12.rituals.end.desc">Recap + minnesbefordran. Sessionsbeslut, nya öppna frågor och feedback skrivs till rätt typad fil i <code>memory/</code>. Skriver aldrig tyst mitt i en session.</p>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <h3 data-i18n="s12.tasks.title" style="font-size:18px;color:var(--text);margin-top:8px">Task-verb-skills</h3>
+    <p data-i18n="s12.tasks.desc">Fem komponerbara skills som vilken specialist som helst kan anropa — separerade från agentidentitet. Berit väljer rätt verb för rätt specialist.</p>
+    <div class="spacer"></div>
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <thead><tr><th data-i18n="s12.tasks.col1">Skill</th><th data-i18n="s12.tasks.col2">Vad den gör</th><th data-i18n="s12.tasks.col3">Typiska anropare</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--lime)">requirements-review</strong></td><td data-i18n="s12.tasks.r1">Granskar krav: täckning, testbarhet, oklara beroenden</td><td>Anna, Gunnar, Ingrid</td></tr>
+          <tr><td><strong style="color:var(--cyan)">test-scenario-generation</strong></td><td data-i18n="s12.tasks.r2">Härleder testscenarier (positiva, negativa, edge) från krav</td><td>Ingrid, Pelle, Sigrid</td></tr>
+          <tr><td><strong style="color:var(--sky)">meeting-summary</strong></td><td data-i18n="s12.tasks.r3">Möteslogg → strukturerad beslutslista + action items</td><td>Berit, Erik, Gunnar</td></tr>
+          <tr><td><strong style="color:var(--red)">risk-review</strong></td><td data-i18n="s12.tasks.r4">Risk-genomgång: säkerhet, drift, leverans, beroenden</td><td>Ingrid, Sigrid, Torsten</td></tr>
+          <tr><td><strong style="color:var(--amber)">regression-test</strong></td><td data-i18n="s12.tasks.r5">Kör kanoniska prompts från <code>docs/regression-tests.md</code> före version bump</td><td>Berit, Ingrid</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p data-i18n="s12.callout"><strong>Varför:</strong> Tidigare kunde Berit inte komma ihåg ett beslut från igår eller om en intressent fortfarande väntade. Nu finns kontexten kvar — och task-verben gör att kompetens kan flyttas mellan agenter utan att duplicera prompts.</p>
+    </div>
+  </section>
+
   <footer>
     <div class="footer-left">
       <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text-dim);">berit-team</span>
-      <span style="font-family: var(--mono); font-size: 11px; color: var(--text-faint);">v0.2.0 — 2026-03-27</span>
+      <span style="font-family: var(--mono); font-size: 11px; color: var(--text-faint);">v0.3.0 — 2026-05-20</span>
     </div>
     <div class="footer-links">
       <a href="index.html" class="footer-link">Landningssida</a>
@@ -1066,19 +1170,19 @@ You review and report only.</pre>
 <script>
 (function() {
   var K = 'berit-team-lang';
-  var HO = '\n\n<span class="kw">## Handoff</span>\n<span class="cm">1. READ .context/handoff.md before you start.\n2. Build on decisions and contracts that already exist\n   \u2014 don\u2019t invent new things that conflict.\n3. When done, ADD to handoff.md: what you\n   delivered, design choices, and dependencies for the next step.</span>';
+  var HO = '\n\n<span class="kw">## Handoff</span>\n<span class="cm">1. READ .context/handoff.md before you start, if it exists.\n2. Build on decisions and contracts that already exist\n   \u2014 don\u2019t invent new things that conflict.\n3. When done: report in your final message what you\n   delivered, design choices, and dependencies for the next step.\n4. Do NOT write to handoff.md as a subagent under Berit\n   \u2014 she is the sole writer and records your deliveries.</span>';
   var en = {
     // Header
-    'header.label': 'Claude Cowork Plugin — v0.2.0',
+    'header.label': 'Claude Cowork Plugin — v0.3.0',
     'header.desc': 'Multi-agent plugin that simulates a Swedish product team. An orchestrator (Berit) delegates tasks to nine specialist agents via the Claude Agent SDK\u2019s subagent system.',
 
     // 01 — File Structure
     's01.num': '01 — File Structure',
     's01.title': 'Plugin Directory',
-    's01.desc': 'The plugin lives as a remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All configuration is done through three types of files: plugin manifest, skill definition, and command definitions.',
+    's01.desc': 'The plugin lives as a remote plugin under <code style="color:var(--accent)">.remote-plugins/</code>. All configuration is done through four types of files: plugin manifest, agent definitions, skill definition, and command definitions.',
     's01.c1': '# manifest: name, version, description',
     's01.c2': '# orchestrator instructions, workflow, handoff protocol',
-    's01.c3': '# system prompts for all 9 agents',
+    's01.c3': '# anna.md..torsten.md — frontmatter (name, description, tools, model) + system prompt',
     's01.c4': '# /berit — entrypoint, starts the orchestrator',
     's01.c5': '# /anna — business analyst       (sonnet)',
     's01.c6': '# /gunnar — product &amp; spec       (opus)',
@@ -1089,6 +1193,18 @@ You review and report only.</pre>
     's01.c11': '# /torsten — infra &amp; DB          (opus)',
     's01.c12': '# /ingrid — QA (read-only)       (opus)',
     's01.c13': '# /erik — documentation          (sonnet)',
+    's01.c14': '# task verb: requirements review',
+    's01.c15': '# task verb: test scenarios from requirements',
+    's01.c16': '# task verb: meeting log → decisions + actions',
+    's01.c17': '# task verb: risk walkthrough',
+    's01.c18': '# task verb: run canonical prompts before version bump',
+    's01.c19': '# /berit-start — read memory, briefing (read-only)',
+    's01.c20': '# /berit-end — recap, promotes decisions into memory',
+    's01.c21': '# constitution, decision authority, file routing, regression tests',
+    's01.c22': '# persistent cross-session memory — MEMORY.md + typed files',
+    's01.c23': '# dated deliverables: outputs/YYYY-MM-DD/',
+    's01.c24': '# generates src/agents/*.ts from agents/*.md (npm run sync:agents)',
+    's01.c25': '# generated SDK agent modules — never edit by hand',
 
     // 02 — Plugin Manifest
     's02.num': '02 — Plugin Manifest',
@@ -1099,7 +1215,7 @@ You review and report only.</pre>
     's03.title': 'Orchestrated vs. Direct',
     's03.desc': 'The plugin exposes two ways to reach the team. <code style="color:var(--accent)">/berit</code> starts the full orchestration loop. The individual commands (<code style="color:var(--text-muted)">/anna</code>, <code style="color:var(--text-muted)">/gunnar</code>, etc.) run a single agent directly, without the orchestrator.',
     's03.card1.title': '/berit &lt;task&gt;',
-    's03.card1.desc': 'Loads <code>berit-orchestrator</code> skill + all agent prompts. Creates handoff.md and delegates to the right agents in sequence. Model: <strong style="color:var(--text)">opus</strong>.',
+    's03.card1.desc': 'Loads the <code>berit-orchestrator</code> skill. Creates handoff.md and delegates to the right agents in sequence via <code>subagent_type</code> — the harness loads each agent’s persona, tools, and model. Model: <strong style="color:var(--text)">opus</strong>.',
     's03.card2.title': '/agent &lt;task&gt;',
     's03.card2.desc': 'Loads the agent\u2019s system prompt. Reads handoff.md if it exists. Runs the task in isolation. Model varies: <strong style="color:var(--purple)">opus</strong> or <strong style="color:var(--cyan)">sonnet</strong>.',
 
@@ -1123,7 +1239,7 @@ You review and report only.</pre>
     // 05 — System Prompts
     's05.num': '05 — System Prompts',
     's05.title': 'Complete Agent Instructions',
-    's05.desc': 'These prompts live in <code style="color:var(--accent)">references/agent-prompts.md</code> and are injected verbatim into each subagent call. The handoff block at the end of each prompt is identical \u2014 it forces the agent to read existing decisions and log its own.',
+    's05.desc': 'These prompts live in <code style="color:var(--accent)">agents/*.md</code> \u2014 one file per agent with frontmatter (name, description, tools, model) and the prompt as the body. The harness applies them automatically when Berit delegates via <code>subagent_type</code>. The handoff block at the end of each prompt follows the same pattern \u2014 it forces the agent to read existing decisions and report its deliveries in its final message.',
     's05.gunnar.role': 'Product &amp; Spec',
     's05.torsten.role': 'Data &amp; Infrastructure',
     's05.ingrid.role': 'QA &amp; Quality',
@@ -1132,19 +1248,19 @@ You review and report only.</pre>
     // 06 — Permission Matrix
     's06.num': '06 — Permission Matrix',
     's06.title': 'Tools per Agent',
-    's06.desc': 'Each command file declares <code style="color:var(--accent)">allowed-tools</code> in its frontmatter. Ingrid lacks Write/Edit intentionally. Analyst roles (Anna, Gunnar, Astrid, Maja) lack Edit and Bash \u2014 they produce documents, not code.',
+    's06.desc': 'Each agent definition in <code style="color:var(--accent)">agents/*.md</code> declares <code style="color:var(--accent)">tools</code> in its frontmatter — the harness enforces the restrictions, they are not just convention. The command files mirror the same list via <code style="color:var(--accent)">allowed-tools</code>. Ingrid lacks Write/Edit intentionally. Analyst roles (Anna, Gunnar, Astrid, Maja) lack Edit and Bash \u2014 they produce documents, not code.',
     's06.callout': '<strong>Model choice:</strong> Roles requiring deep reasoning (orchestration, code generation, UX analysis, security review) run on <strong>opus</strong>. Roles with more structured, context-bound tasks (requirements analysis, measurement plans, documentation) run on <strong>sonnet</strong> for speed and cost efficiency.',
 
     // 07 — Handoff Protocol
     's07.num': '07 — Handoff Protocol',
-    's07.desc': 'Continuity between agents happens through a shared file: <code style="color:var(--accent)">.context/handoff.md</code>. Berit creates the file before the first delegation. Each agent reads it before starting and updates it when done.',
+    's07.desc': 'Continuity between agents happens through a shared file: <code style="color:var(--accent)">.context/handoff.md</code>. Berit creates the file before the first delegation and is its <strong>sole writer</strong>. Specialists read it but never write to it — they report deliveries and decisions in their final message, and Berit records them. This eliminates write races between parallel agents.',
     's07.codeheader': '.context/handoff.md — exact format',
     's07.step1.title': 'Step 1: Berit creates',
     's07.step1.desc': 'Before the first delegation, Berit fills in the Mission, goals, and constraints.',
-    's07.step2.title': 'Step 2: Agents read + write',
-    's07.step2.desc': 'Each agent reads the file before starting. Adds their decisions and deliveries when done.',
-    's07.step3.title': 'Step 3: Berit verifies',
-    's07.step3.desc': 'After each agent, Berit reads the file and checks that no decisions conflict with previous steps.',
+    's07.step2.title': 'Step 2: Agents read + report',
+    's07.step2.desc': 'Each agent reads the file before starting. Reports decisions and deliveries in its final message — never writes to the file itself.',
+    's07.step3.title': 'Step 3: Berit records + verifies',
+    's07.step3.desc': 'After each agent, Berit records the deliveries and decisions in the file and checks that nothing conflicts with previous steps.',
 
     // 08 — Standard Workflow
     's08.num': '08 — Standard Workflow',
@@ -1166,7 +1282,7 @@ You review and report only.</pre>
     // 09 — Delegation
     's09.num': '09 — Delegation',
     's09.title': 'How Berit Calls an Agent',
-    's09.desc': 'Berit uses the Agent tool with the agent\u2019s full system prompt (from <code style="color:var(--accent)">references/agent-prompts.md</code>), handoff instruction, specific task, relevant files, and dependencies.',
+    's09.desc': 'Berit uses the Agent tool with <code style="color:var(--accent)">subagent_type: "berit-team:&lt;name&gt;"</code> \u2014 the harness applies the agent\u2019s persona, tool restrictions, and model from <code style="color:var(--accent)">agents/*.md</code>. The delegation message contains only the handoff instruction, specific task, relevant files, and dependencies \u2014 never pasted system prompts.',
     's09.codeheader': 'Delegation Template',
 
     // 10 — Command Frontmatter
@@ -1185,15 +1301,48 @@ You review and report only.</pre>
     's11.card2.title': 'Critical Issues',
     's11.card2.desc': 'If Ingrid flags critical \u2014 Berit delegates the fix to the right specialist, then re-review by Ingrid.',
     's11.card3.title': 'Final Report',
-    's11.card3.desc': 'Berit delivers: what was built, design decisions, known limitations. In Swedish.'
+    's11.card3.desc': 'Berit delivers: what was built, design decisions, known limitations. In Swedish.',
+
+    // 12 — Operating Model
+    's12.num': '12 — Operating Model (v0.3.0)',
+    's12.title': 'Constitution, Decisions, Memory',
+    's12.desc': 'v0.3.0 lifts the team from a pure delegation loop to an operating layer that survives across sessions. Four <code style="color:var(--accent)">docs/</code> files codify rules and decision authority, <code style="color:var(--accent)">memory/</code> keeps context over time, and two commands bracket every session.',
+    's12.card1.title': 'Constitution',
+    's12.card1.desc': '<code>docs/constitution.md</code> collects hard rules: what Berit may and may not do, how specialists deliver, when handoff is mandatory. One page — read first at every session.',
+    's12.card2.title': 'Decision Authority',
+    's12.card2.desc': '<code>docs/decision-authority.md</code> defines four tiers per agent: what they may decide alone, what requires approval, what must escalate to a human. The approval format is standardized.',
+    's12.card3.title': 'File Routing',
+    's12.card3.desc': '<code>docs/file-routing.md</code> is a map of placement rules: memory in <code>memory/</code>, working context in <code>.context/handoff.md</code>, deliverables in <code>outputs/YYYY-MM-DD/</code>. No ambiguity about where things go.',
+    's12.card4.title': 'Regression Tests',
+    's12.card4.desc': '<code>docs/regression-tests.md</code> lists canonical prompts that must pass before version bumps. The <code>regression-test</code> skill runs them.',
+    's12.memory.title': 'Three Layers of Memory',
+    's12.memory.codeheader': 'Memory topology',
+    's12.rituals.title': 'Session Rituals',
+    's12.rituals.start.title': '/berit-start',
+    's12.rituals.start.desc': 'Read-only briefing from <code>memory/</code>. Lists open questions, waiting-on-team, and recent decisions before anything new runs. Never writes to memory.',
+    's12.rituals.end.title': '/berit-end',
+    's12.rituals.end.desc': 'Recap + memory promotion. Session decisions, new open questions, and feedback are written to the right typed file in <code>memory/</code>. Never writes silently mid-session.',
+    's12.tasks.title': 'Task-verb Skills',
+    's12.tasks.desc': 'Five composable skills any specialist can invoke — separated from agent identity. Berit picks the right verb for the right specialist.',
+    's12.tasks.col1': 'Skill',
+    's12.tasks.col2': 'What it does',
+    's12.tasks.col3': 'Typical callers',
+    's12.tasks.r1': 'Reviews requirements: coverage, testability, unclear dependencies',
+    's12.tasks.r2': 'Derives test scenarios (positive, negative, edge) from requirements',
+    's12.tasks.r3': 'Meeting log → structured decision list + action items',
+    's12.tasks.r4': 'Risk walkthrough: security, ops, delivery, dependencies',
+    's12.tasks.r5': 'Runs canonical prompts from <code>docs/regression-tests.md</code> before version bump',
+    's12.callout': '<strong>Why:</strong> Previously Berit couldn’t recall a decision from yesterday or whether a stakeholder was still waiting. Now that context persists — and task verbs let competence move between agents without duplicating prompts.'
   };
+
+  en['s12.memory.format'] = '<span class="kw">memory/</span>                          <span class="cm"># persistent, across sessions</span>\n├── <span class="fn">MEMORY.md</span>                    <span class="cm"># index — pointers to typed files</span>\n├── <span class="fn">team_context.md</span>              <span class="cm"># roles, norms, ownership</span>\n├── <span class="fn">project_context.md</span>           <span class="cm"># active projects, goals, deadlines</span>\n├── <span class="fn">decisions.md</span>                 <span class="cm"># dated decisions + rationale</span>\n├── <span class="fn">open_questions.md</span>            <span class="cm"># unresolved items + owner</span>\n├── <span class="fn">waiting_on_team.md</span>           <span class="cm"># blocked on a human</span>\n└── <span class="fn">feedback.md</span>                  <span class="cm"># validated approaches + corrections</span>\n\n<span class="kw">.context/handoff.md</span>              <span class="cm"># working memory for one assignment</span>\n<span class="kw">outputs/2026-05-20/</span>              <span class="cm"># dated deliveries (specs, reviews, recaps)</span>';
 
   // System prompt translations (appended after object for readability)
   en['s07.format'] = '<span class="kw"># Project Context</span>\n\n<span class="kw">## Mission</span>\n<span class="cm">[What and why \u2014 set by Berit at project start]</span>\n\n<span class="kw">## Decisions</span>\n<span class="str">- [Date] [Agent]: [Decision and rationale]</span>\n<span class="str">- [Date] [Agent]: [Decision and rationale]</span>\n\n<span class="kw">## Deliveries</span>\n<span class="str">- [Agent] \u2192 [file]: [description]</span>\n<span class="str">- [Agent] \u2192 [file]: [description]</span>\n\n<span class="kw">## Contracts &amp; Schemas</span>\n<span class="cm">[Shared types, DB schemas, API contracts.\n Written by Berit before parallel agents start,\n so that Sigrid and Pelle build against the same spec.]</span>\n\n<span class="kw">## Open Questions</span>\n<span class="str">- [Question] (flagged by [Agent])</span>\n<span class="str">- [Question] (flagged by [Agent])</span>';
 
-  en['s09.code'] = '<span class="cm">// 1. Agent\u2019s full system prompt is injected</span>\n<span class="str">"You are Sigrid, a senior backend developer..."</span>\n\n<span class="cm">// 2. Handoff instruction</span>\n<span class="str">"Read .context/handoff.md first."</span>\n\n<span class="cm">// 3. Specific task</span>\n<span class="str">"Sigrid, your task: Implement auth endpoint\n based on Gunnar\u2019s spec in .context/handoff.md"</span>\n\n<span class="cm">// 4. Context</span>\n<span class="str">"Relevant files: src/api/auth.ts\n Dependencies: Torsten\u2019s schema (see handoff.md)\n Constraints: RLS must be active"</span>\n\n<span class="cm">// 5. Handoff update</span>\n<span class="str">"When done, update .context/handoff.md with your\n deliveries and decisions."</span>';
+  en['s09.code'] = '<span class="cm">// 1. Pick the agent \u2014 the harness loads persona,\n//    tools, and model from agents/sigrid.md</span>\n<span class="fn">subagent_type</span>: <span class="str">"berit-team:sigrid"</span>\n\n<span class="cm">// 2. Handoff instruction</span>\n<span class="str">"Read .context/handoff.md first."</span>\n\n<span class="cm">// 3. Specific task</span>\n<span class="str">"Sigrid, your task: Implement auth endpoint\n based on Gunnar\u2019s spec in .context/handoff.md"</span>\n\n<span class="cm">// 4. Context</span>\n<span class="str">"Relevant files: src/api/auth.ts\n Dependencies: Torsten\u2019s schema (see handoff.md)\n Constraints: RLS must be active"</span>\n\n<span class="cm">// 5. Afterwards: Sigrid reports deliveries in her\n//    final message \u2014 Berit records them in handoff.md</span>';
 
-  en['s10.code'] = '<span class="kw">---</span>\n<span class="fn">description</span>: <span class="str">Ingrid reviews code, security, and quality</span>\n<span class="fn">allowed-tools</span>: <span class="str">Read, Bash, Glob, Grep</span>         <span class="cm"># no Write/Edit</span>\n<span class="fn">model</span>: <span class="str">opus</span>\n<span class="fn">argument-hint</span>: <span class="str">&lt;task&gt;</span>\n<span class="kw">---</span>\n\nRead <span class="str">`${CLAUDE_PLUGIN_ROOT}/skills/berit-orchestrator/\nreferences/agent-prompts.md`</span> and load Ingrid\u2019s system prompt.\n\nYou are now Ingrid. The user\u2019s task is: <span class="fn">$ARGUMENTS</span>\n\n<span class="kw">IMPORTANT:</span> You have no Write or Edit tools.\nYou review and report only.';
+  en['s10.code'] = '<span class="kw">---</span>\n<span class="fn">description</span>: <span class="str">Ingrid reviews code, security, and quality</span>\n<span class="fn">allowed-tools</span>: <span class="str">Read, Bash, Glob, Grep</span>         <span class="cm"># no Write/Edit</span>\n<span class="fn">model</span>: <span class="str">opus</span>\n<span class="fn">argument-hint</span>: <span class="str">&lt;task&gt;</span>\n<span class="kw">---</span>\n\nRead <span class="str">`${CLAUDE_PLUGIN_ROOT}/agents/ingrid.md`</span> and load\nIngrid\u2019s system prompt (the body below the frontmatter).\n\nYou are now Ingrid. The user\u2019s task is: <span class="fn">$ARGUMENTS</span>\n\n<span class="kw">IMPORTANT:</span> You have no Write or Edit tools.\nYou review and report only.';
 
   en['s05.anna.prompt'] = 'You are Anna, an experienced business analyst focused on\nrequirements analysis and process understanding.\n\nFor every analysis you do, include:\n<span class="num">1.</span> <span class="fn">Current State</span> \u2014 how does the process/flow work today?\n<span class="num">2.</span> <span class="fn">Needs Mapping</span> \u2014 what problems do\n   users and stakeholders experience?\n<span class="num">3.</span> <span class="fn">Gap Analysis</span> \u2014 what\u2019s missing between current and desired state?\n<span class="num">4.</span> <span class="fn">Requirements Specification</span> \u2014 functional and non-functional\n   requirements, prioritized\n<span class="num">5.</span> <span class="fn">Stakeholder Impact</span> \u2014 who is affected and how?\n<span class="num">6.</span> <span class="fn">Dependencies and Risks</span>\n\nTranslate business needs into concrete, testable requirements that\nGunnar can use in his spec.\nWrite in Swedish. Be concrete, structured, and lead\nwith the most important.' + HO;
 
@@ -1209,7 +1358,7 @@ You review and report only.</pre>
 
   en['s05.torsten.prompt'] = 'You are Torsten, a senior database engineer and\ninfrastructure specialist.\n\nPrinciples:\n<span class="fn">- Every migration includes RLS policies</span> for new tables\n<span class="fn">- Naming conventions:</span> snake_case, plural table names\n<span class="fn">- Index</span> all foreign keys and common WHERE columns\n<span class="fn">- Constraints in the database</span>, not just in the application\n<span class="fn">- Document every migration</span> with purpose and rollback strategy\n\nWrite SQL that is clear, correct, and performance-optimized.' + HO;
 
-  en['s05.ingrid.prompt'] = 'You are Ingrid, a senior QA engineer and security reviewer.\n\nYou intentionally have <span class="kw">NO write access</span> to project files.\nYou review and report.\nYou <span class="kw">MAY</span> write to .context/handoff.md to log\nyour findings.\n\nFocus on:\n<span class="fn">- Security:</span> injection, auth bypass, data leaks, missing validation\n<span class="fn">- Correctness:</span> edge cases, off-by-one, race conditions\n<span class="fn">- Testability:</span> missing tests, insufficient coverage\n<span class="fn">- Code Quality:</span> naming, complexity, duplication\n\nStructure your report as:\n<span class="num">1.</span> <span class="str">Critical Issues</span> (must fix)\n<span class="num">2.</span> <span class="str">Warnings</span> (should fix)\n<span class="num">3.</span> <span class="str">Suggestions</span> (nice-to-have)\n\nBe factual and specific. Include file references and line numbers.' + HO;
+  en['s05.ingrid.prompt'] = 'You are Ingrid, a senior QA engineer and security reviewer.\n\nYou intentionally have <span class="kw">NO write tools</span>.\nYou review and report — you never modify\nproject files.\n\nFocus on:\n<span class="fn">- Security:</span> injection, auth bypass, data leaks, missing validation\n<span class="fn">- Correctness:</span> edge cases, off-by-one, race conditions\n<span class="fn">- Testability:</span> missing tests, insufficient coverage\n<span class="fn">- Code Quality:</span> naming, complexity, duplication\n\nStructure your report as:\n<span class="num">1.</span> <span class="str">Critical Issues</span> (must fix)\n<span class="num">2.</span> <span class="str">Warnings</span> (should fix)\n<span class="num">3.</span> <span class="str">Suggestions</span> (nice-to-have)\n\nBe factual and specific. Include file references and line numbers.\n\n<span class="kw">## Handoff</span>\n<span class="cm">1. READ .context/handoff.md before you start, if it exists.\n2. Review against decisions and contracts that already exist.\n3. Report your findings in your final message\n   — Berit or the user records them in handoff.md.</span>';
 
   en['s05.erik.prompt'] = 'You are Erik, a senior technical writer. You write\ndocumentation that developers actually read.\n\nDocumentation types you master:\n<span class="fn">- API Documentation</span> with endpoints, parameters, examples, error codes\n<span class="fn">- Runbooks</span> for operations and incident handling\n<span class="fn">- Onboarding Guides</span> for new developers\n<span class="fn">- Architecture Descriptions</span> and system overviews\n<span class="fn">- Changelog and Release Notes</span>\n\nPrinciples:\n- Write for the reader, not for yourself\n- Code examples in every section where relevant\n- Avoid documenting the obvious \u2014 focus on why\n  and gotchas\n- Keep the structure consistent: purpose, prerequisites, steps,\n  troubleshooting\n- Update, don\u2019t rewrite \u2014 build on existing\n  documentation\n\nWrite in Swedish unless the documentation targets\nan international audience.' + HO;
 
