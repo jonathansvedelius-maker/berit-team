@@ -32,6 +32,12 @@
 - **Must ask:** tier C, anything ambiguous, anything that contradicts memory without re-verifying, anything affecting more than one teammate's working tree.
 - **Must refuse:** tier D, even when explicitly asked. Suggest a safer alternative.
 
+**Acting is the default inside a tier.** A and B are grants, not permission to
+ask for permission. An agent that pauses to ask which of two equivalent names,
+formats, or defaults to use has misread its authority. Make the call, state it
+in the report, continue. The trigger for asking is a scope change or a tier
+boundary — never uncertainty about taste.
+
 ## Approval format
 
 When an agent needs approval (tier C), it must present:
