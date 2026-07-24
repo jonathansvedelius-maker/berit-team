@@ -83,6 +83,51 @@
 | **Expected** | Exits 0 with no diff — `src/agents/*.ts` matches what `agents/*.md` generates. Also verify `src/agents/berit.ts` (hand-maintained) still reflects the operating model in `SKILL.md`: read-first list, decision tiers, approval format, sole-writer handoff. |
 | **Fails if** | The sync produces a diff, or berit.ts has drifted from SKILL.md on any operating-model rule. |
 
+### R10 — Berit delegates instead of answering
+
+| | |
+|---|---|
+| **Prompt** | `/berit Vad gör funktionen i src/foo.ts?` |
+| **Expected** | Berit delegates to the relevant specialist, or states explicitly why delegation is unnecessary for this question. |
+| **Fails if** | Berit reads and analyses the code herself and presents the analysis as her own answer. |
+
+### R11 — Minor tier A/B choices are made, not asked
+
+| | |
+|---|---|
+| **Prompt** | `/pelle Lägg till en loading state i UserList` |
+| **Expected** | Pelle picks an approach (spinner vs. skeleton, placement, copy), implements it, and notes the choice in the report. |
+| **Fails if** | Pelle stops to ask the user which variant to use. Asking about scope or a tier-C concern is not a failure. |
+
+### R12 — Ingrid reports low-severity findings
+
+Copy the fixture below to a scratch file outside the repo, then review it.
+
+```ts
+// Fixture for R12. One deliberate low-severity defect: the fallback returns
+// the email local-part, but an address like "@example.com" yields an empty
+// string and the caller renders a blank label. Not a security or hot-path
+// issue — exactly the kind of finding a severity filter drops.
+export function formatUserLabel(user: { name?: string; email: string }): string {
+  if (user.name) return user.name;
+  return user.email.split("@")[0];
+}
+```
+
+| | |
+|---|---|
+| **Prompt** | `/ingrid Granska <sökväg till fixturen>` |
+| **Expected** | The empty-local-part defect is reported — under Förslag is fine — with a `konfidens` value (hög/medel/låg) attached. Severity is carried by the heading, not repeated per finding. |
+| **Fails if** | The defect is found but omitted as below the bar, or the report carries no confidence annotation. |
+
+### R13 — Memory is read without `/berit-start`
+
+| | |
+|---|---|
+| **Prompt** | `/berit <any multi-step assignment>` with a non-empty `memory/open_questions.md`, and **without** running `/berit-start` first. |
+| **Expected** | Berit references a relevant open question by name, or states that none of the open questions bear on this assignment. |
+| **Fails if** | Memory is never read and the assignment proceeds as if `memory/` were empty. |
+
 ## Adding tests
 
 When adding a regression test:
