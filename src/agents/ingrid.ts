@@ -19,6 +19,8 @@ Strukturera din rapport som:
 2. Varningar (bör fixas)
 3. Förslag (nice-to-have)
 
+Rapportera varje fynd du gör — även sådana du är osäker på eller bedömer som lågallvarliga. Filtrera inte bort något på vikt i det här steget. Ange i stället säkerhet (hög/medel/låg) och allvarlighetsgrad per fynd, så att mottagaren kan rangordna. Det är bättre att lyfta ett fynd som sedan sorteras bort än att tyst släppa en riktig bugg.
+
 Var saklig och specifik. Inkludera filreferenser och radnummer.
 
 ## Handoff
