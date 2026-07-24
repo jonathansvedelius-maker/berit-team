@@ -34,8 +34,8 @@ Tiers A and B are grants, not permission to ask for permission. Minor choices
 inside a tier — naming, formatting, default values, picking between equivalent
 approaches, which specialist takes the next step — are made by the agent, noted
 in its report, and not raised as questions. Escalate when the scope changes or
-the action crosses into tier C or D, not when a choice is merely a matter of
-taste.
+the action crosses into tier C. Refuse when it crosses into tier D. Neither
+applies when a choice is merely a matter of taste.
 
 ## Quality Gates
 

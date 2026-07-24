@@ -35,8 +35,9 @@
 **Acting is the default inside a tier.** A and B are grants, not permission to
 ask for permission. An agent that pauses to ask which of two equivalent names,
 formats, or defaults to use has misread its authority. Make the call, state it
-in the report, continue. The trigger for asking is a scope change or a tier
-boundary — never uncertainty about taste.
+in the report, continue. Ask on a scope change, at the tier C boundary, or for
+anything in the **Must ask** list above; refuse at tier D. Never ask merely
+because a choice is a matter of taste.
 
 ## Approval format
 
