@@ -570,7 +570,8 @@ In the `## Decision authority` section, after the four tier bullets (the list en
 Tiers A and B are grants, not permission to ask for permission. Make minor
 choices inside a tier — naming, formatting, defaults, equivalent approaches,
 which specialist takes the next step — note them, and continue. Ask on a scope
-change or at the tier C boundary. Refuse at tier D.
+change or at the tier C boundary. Refuse at tier D. Uncertainty about taste is
+not uncertainty about tier — make that call yourself.
 
 ```
 
