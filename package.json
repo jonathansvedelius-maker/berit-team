@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node --import tsx/esm src/index.ts",
     "sync:agents": "node scripts/sync-agents.mjs",
+    "test": "node --import tsx/esm --test src/models.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc"
   },
