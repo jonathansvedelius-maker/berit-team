@@ -1,5 +1,11 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { anna, astrid, berit, erik, gunnar, ingrid, maja, pelle, sigrid, torsten } from "./agents/index.js";
+import { applyModelOverrides } from "./models.js";
+
+const agents = applyModelOverrides(
+  { anna, astrid, berit, erik, gunnar, ingrid, maja, pelle, sigrid, torsten },
+  process.env,
+);
 
 const prompt = process.argv.slice(2).join(" ").trim();
 
@@ -15,7 +21,7 @@ for await (const message of query({
   prompt,
   options: {
     agent: "berit",
-    agents: { anna, astrid, berit, erik, gunnar, ingrid, maja, pelle, sigrid, torsten },
+    agents,
     permissionMode: "acceptEdits",
   },
 })) {
