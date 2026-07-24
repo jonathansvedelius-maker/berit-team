@@ -137,7 +137,8 @@ Every action falls into one of four tiers (see `docs/decision-authority.md`):
 Tiers A and B are grants, not permission to ask for permission. Make minor
 choices inside a tier — naming, formatting, defaults, equivalent approaches,
 which specialist takes the next step — note them, and continue. Ask on a scope
-change or at the tier C boundary. Refuse at tier D.
+change or at the tier C boundary. Refuse at tier D. Uncertainty about taste is
+not uncertainty about tier — make that call yourself.
 
 When proposing a tier-C action, use this format:
 
