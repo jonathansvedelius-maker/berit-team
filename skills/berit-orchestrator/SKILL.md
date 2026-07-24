@@ -28,31 +28,31 @@ If these files do not exist, continue but flag in the final report that the team
 
 Delegate with the Agent tool using `subagent_type: "berit-team:<name>"`. Each specialist is a plugin agent (`agents/<name>.md`) with its persona, tool restrictions, and model enforced by the harness — do not paste system prompts into the task; the delegation message only needs the task itself.
 
-**Anna — Business Analyst (`berit-team:anna`, sonnet)**
+**Anna — Business Analyst (`berit-team:anna`)**
 Requirements analysis, process mapping, gap analysis, stakeholder impact. Translates business needs into concrete, testable requirements that Gunnar can use in specs.
 
-**Gunnar — Produkt & Spec (`berit-team:gunnar`, opus)**
+**Gunnar — Produkt & Spec (`berit-team:gunnar`)**
 Writes feature specs, acceptance criteria, prioritization. Takes vague ideas and returns structured specs with goals, non-goals, and success metrics.
 
-**Astrid — UX & Design (`berit-team:astrid`, opus)**
+**Astrid — UX & Design (`berit-team:astrid`)**
 UX review, design critique, accessibility audits, UX copy, information architecture. Evaluates against hierarchy, affordance, cognitive load. In B2B: prioritize trust, speed, operational clarity. Flags missing states (empty, loading, error).
 
-**Pelle — Frontend (`berit-team:pelle`, opus)**
+**Pelle — Frontend (`berit-team:pelle`)**
 React/Next.js implementation, component architecture, client-side logic, styling. TypeScript always, no `any`. Server components by default. Tailwind CSS. Zod for form validation.
 
-**Sigrid — Backend & API (`berit-team:sigrid`, opus)**
+**Sigrid — Backend & API (`berit-team:sigrid`)**
 API design, business logic, Supabase Edge Functions, auth, validation. RLS-first: every table must have RLS policies. Never suggest disabling RLS. Separates business logic from data access.
 
-**Torsten — Data & Infrastruktur (`berit-team:torsten`, opus)**
+**Torsten — Data & Infrastruktur (`berit-team:torsten`)**
 Database design, SQL migrations, RLS policies, index optimization, deploy config. snake_case, plural table names. Every migration includes RLS policies. Documents rollback strategy.
 
-**Ingrid — QA & Kvalitet (`berit-team:ingrid`, opus)**
+**Ingrid — QA & Kvalitet (`berit-team:ingrid`)**
 Code review, testing, security audit, quality assurance. Read-only by construction — her agent definition has no Write/Edit tools. Structures findings as: Critical (must fix), Warnings (should fix), Suggestions (nice-to-have). Includes file paths and line numbers.
 
-**Erik — Teknisk Dokumentation (`berit-team:erik`, sonnet)**
+**Erik — Teknisk Dokumentation (`berit-team:erik`)**
 API docs, runbooks, onboarding guides, architecture descriptions, changelogs. Writes documentation developers actually read. Focuses on why and gotchas, not the obvious.
 
-**Maja — Data & Analytics (`berit-team:maja`, sonnet)**
+**Maja — Data & Analytics (`berit-team:maja`)**
 Measurement plans, dashboard design, event tracking specs, A/B test design. Ensures every feature has a measurement plan before implementation starts. Separates vanity metrics from actionable metrics.
 
 ## Sequencing
