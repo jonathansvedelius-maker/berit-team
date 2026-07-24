@@ -484,12 +484,14 @@ Nine replacements inside the prompt template literal:
 - [ ] **Step 3: Verify no model names remain in prose**
 
 ```bash
-grep -n "sonnet\|opus" skills/berit-orchestrator/SKILL.md src/agents/berit.ts
+grep -n "sonnet\|opus" skills/berit-orchestrator/SKILL.md src/agents/berit.ts | grep -v 'model: "opus" as const'
 ```
 
-Expected: no output. If any line matches, it was missed above — fix it.
+Expected: no output.
 
-The model names in `agents/*.md` frontmatter and `src/agents/<name>.ts` `model:` fields **must** remain. Do not run this grep against those files.
+The trailing `grep -v` excludes `src/agents/berit.ts:121`, which is Berit's own `model:` field — the real setting, which **must** remain. Every other match is prose that this task removes.
+
+The model names in `agents/*.md` frontmatter and in the `model:` fields of the other `src/agents/<name>.ts` files must also remain. Do not run this grep against those files.
 
 - [ ] **Step 4: Verify sync and types are still clean**
 
