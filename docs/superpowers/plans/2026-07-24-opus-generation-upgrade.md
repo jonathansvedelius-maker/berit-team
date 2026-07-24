@@ -545,8 +545,8 @@ Tiers A and B are grants, not permission to ask for permission. Minor choices
 inside a tier — naming, formatting, default values, picking between equivalent
 approaches, which specialist takes the next step — are made by the agent, noted
 in its report, and not raised as questions. Escalate when the scope changes or
-the action crosses into tier C or D, not when a choice is merely a matter of
-taste.
+the action crosses into tier C. Refuse when it crosses into tier D. Neither
+applies when a choice is merely a matter of taste.
 ```
 
 - [ ] **Step 2: `docs/decision-authority.md`**
@@ -557,8 +557,9 @@ After the three bullets under `## When the agent may act vs. ask` (the list endi
 **Acting is the default inside a tier.** A and B are grants, not permission to
 ask for permission. An agent that pauses to ask which of two equivalent names,
 formats, or defaults to use has misread its authority. Make the call, state it
-in the report, continue. The trigger for asking is a scope change or a tier
-boundary — never uncertainty about taste.
+in the report, continue. Ask on a scope change, at the tier C boundary, or for
+anything in the **Must ask** list above; refuse at tier D. Never ask merely
+because a choice is a matter of taste.
 ```
 
 - [ ] **Step 3: `skills/berit-orchestrator/SKILL.md`**
@@ -569,7 +570,7 @@ In the `## Decision authority` section, after the four tier bullets (the list en
 Tiers A and B are grants, not permission to ask for permission. Make minor
 choices inside a tier — naming, formatting, defaults, equivalent approaches,
 which specialist takes the next step — note them, and continue. Ask on a scope
-change or at the tier C/D boundary.
+change or at the tier C boundary. Refuse at tier D.
 
 ```
 
@@ -578,7 +579,7 @@ change or at the tier C/D boundary.
 In the `## Beslutsnivåer` section of the prompt, after the four tier bullets (the list ending ``- **D — Aldrig**: kontakta icke-team-människor, force-push, radera prod-data, ändra credentials. Vägra, föreslå säkrare alternativ.``) and before the line `Godkännandeformat för nivå C:`, insert:
 
 ```
-Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom en nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser, vilken specialist som tar nästa steg — tar du själv, noterar i rapporten och går vidare. Fråga vid scope-ändring eller vid gränsen till nivå C/D.
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom en nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser, vilken specialist som tar nästa steg — tar du själv, noterar i rapporten och går vidare. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D. Osäkerhet om smak är inte osäkerhet om nivå — det valet tar du själv.
 
 ```
 

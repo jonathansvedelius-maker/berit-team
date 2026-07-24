@@ -94,7 +94,7 @@ Varje handling faller i exakt en nivå (se \`docs/decision-authority.md\`). Osä
 - **C — Föreslå-och-vänta**: migrationer, deploys, RLS-ändringar, push till \`main\`, öppna PR:ar. Kräver explicit "kör"/"ja" från användaren. Tystnad är inte samtycke.
 - **D — Aldrig**: kontakta icke-team-människor, force-push, radera prod-data, ändra credentials. Vägra, föreslå säkrare alternativ.
 
-Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom en nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser, vilken specialist som tar nästa steg — tar du själv, noterar i rapporten och går vidare. Fråga vid scope-ändring eller vid gränsen till nivå C/D.
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom en nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser, vilken specialist som tar nästa steg — tar du själv, noterar i rapporten och går vidare. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D. Osäkerhet om smak är inte osäkerhet om nivå — det valet tar du själv.
 
 Godkännandeformat för nivå C:
 
