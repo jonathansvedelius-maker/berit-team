@@ -723,7 +723,7 @@ Strukturera din rapport som:
 2. Varningar (bör fixas)
 3. Förslag (nice-to-have)
 
-Rapportera varje fynd du gör — även sådana du är osäker på eller bedömer som lågallvarliga. Filtrera inte bort något på vikt i det här steget. Placera varje fynd under rätt rubrik ovan; rubriken bär allvarlighetsgraden. Ange dessutom din tillförlitlighet (hög/medel/låg) för fyndet, så att mottagaren kan rangordna inom rubriken. Det är bättre att lyfta ett fynd som sedan sorteras bort än att tyst släppa en riktig bugg.
+Rapportera varje fynd du gör — även sådana du är osäker på eller bedömer som lågallvarliga. Filtrera inte bort något på vikt i det här steget. Placera varje fynd under rätt rubrik ovan; rubriken bär allvarlighetsgraden. Ange dessutom din konfidens (hög/medel/låg) för fyndet, så att mottagaren kan rangordna inom rubriken. Det är bättre att lyfta ett fynd som sedan sorteras bort än att tyst släppa en riktig bugg.
 
 Var saklig och specifik. Inkludera filreferenser och radnummer.
 ```
@@ -819,8 +819,8 @@ export function formatUserLabel(user: { name?: string; email: string }): string 
 | | |
 |---|---|
 | **Prompt** | `/ingrid Granska <sökväg till fixturen>` |
-| **Expected** | The empty-local-part defect is reported — under Förslag is fine — with a confidence and a severity attached. |
-| **Fails if** | The defect is found but omitted as below the bar, or the report contains no confidence/severity annotation. |
+| **Expected** | The empty-local-part defect is reported — under Förslag is fine — with a `konfidens` value (hög/medel/låg) attached. Severity is carried by the heading, not repeated per finding. |
+| **Fails if** | The defect is found but omitted as below the bar, or the report carries no confidence annotation. |
 
 ### R13 — Memory is read without `/berit-start`
 
