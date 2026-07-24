@@ -197,6 +197,25 @@ Prompten skickas som argv, så den hamnar i din shell-historik (`~/.bash_history
 
 Undvik hemligheter, API-nycklar, personuppgifter och kundnamn i prompts om sessionen kan bli publik (CI-loggar, inspelade demos, skärmdelning).
 
+## Modellval och pinning
+
+Agenterna deklarerar ett *alias* (`opus` / `sonnet`) i `agents/<namn>.md`, inte ett pinnat modell-ID. Nya modellgenerationer når därför teamet automatiskt, utan kodändring.
+
+Behöver du köra en specifik modell — reproducera en bugg, jämföra två generationer, pinna under en incident — finns två miljövariabler:
+
+| Variabel | Effekt |
+|----------|--------|
+| `BERIT_MODEL` | Gäller alla agenter. |
+| `BERIT_MODEL_<AGENT>` | Gäller en agent. Slår `BERIT_MODEL`. Agentnamnet i versaler: `BERIT_MODEL_INGRID`. |
+
+```bash
+BERIT_MODEL_INGRID=opus npm start -- "Granska auth-flödet"
+```
+
+Tomma värden och enbart blanksteg ignoreras — då används aliaset från `agents/<namn>.md`.
+
+**Gäller bara SDK-ytan.** Plugin-agenter läser statisk frontmatter och ser aldrig miljövariabler. Vill du pinna på plugin-sidan redigerar du `model:` i `agents/<namn>.md` och kör `npm run sync:agents`.
+
 ## Gotchas
 
 - **`cwd` styr läsningen.** Agenterna läser filer relativt den katalog där du kör kommandot. Glömmer du `cd` hamnar de i fel repo.
