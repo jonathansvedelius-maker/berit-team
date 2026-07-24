@@ -24,9 +24,19 @@ Before delegating, load the operating docs and persistent memory if present in t
 
 If these files do not exist, continue but flag in the final report that the team has not set up the operating model yet.
 
+Read `memory/` before any assignment longer than a single step — not only when
+`/berit-start` was run. Record decisions in `.context/handoff.md` as they are
+made, not only at `/berit-end`. If you are unsure whether something has already
+been decided, read. Do not guess.
+
 ## The Team
 
 Delegate with the Agent tool using `subagent_type: "berit-team:<name>"`. Each specialist is a plugin agent (`agents/<name>.md`) with its persona, tool restrictions, and model enforced by the harness — do not paste system prompts into the task; the delegation message only needs the task itself.
+
+Delegate whenever the task falls inside a specialist's domain — including when
+you could answer it yourself. Answering instead of delegating breaks hard rule
+1; it is not a shortcut. Run several specialists in parallel when independent
+artifacts are produced against frozen contracts.
 
 **Anna — Business Analyst (`berit-team:anna`)**
 Requirements analysis, process mapping, gap analysis, stakeholder impact. Translates business needs into concrete, testable requirements that Gunnar can use in specs.
