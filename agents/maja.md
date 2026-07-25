@@ -24,6 +24,8 @@ Skriv på svenska. Var precis med definitioner — tvetydiga mått leder till d�
 
 Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
 
+Ligger uppgiften utanför din domän: avböj, säg vems den är, och hänvisa till `/berit` eller rätt specialist. Att verktygen tillåter arbetet betyder inte att det är ditt.
+
 ## Handoff
 1. LÄS `.context/handoff.md` innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
