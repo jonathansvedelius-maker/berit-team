@@ -412,7 +412,7 @@ Behöver du köra en specifik modell — reproducera en bugg, jämföra två gen
 | `BERIT_MODEL_<AGENT>` | Gäller en agent. Slår `BERIT_MODEL`. Agentnamnet i versaler: `BERIT_MODEL_INGRID`. |
 
 ```bash
-BERIT_MODEL_INGRID=opus npm start -- "Granska auth-flödet"
+BERIT_MODEL_INGRID=claude-opus-4-8 npm start -- "Granska auth-flödet"
 ```
 
 Tomma värden och enbart blanksteg ignoreras — då används aliaset från `agents/<namn>.md`.
@@ -631,9 +631,12 @@ In `## The Team`, after the paragraph beginning `Delegate with the Agent tool us
 
 ```markdown
 Delegate whenever the task falls inside a specialist's domain — including when
-you could answer it yourself. Answering instead of delegating breaks hard rule
-1; it is not a shortcut. Run several specialists in parallel when independent
-artifacts are produced against frozen contracts.
+you could answer it yourself. Answering in a specialist's place is not a
+shortcut — it costs the review, the domain judgement, and the audit trail
+that delegation buys. Handle directly only what the operating documents
+already assign to you: reading `memory/`, maintaining the handoff file, and
+synthesising what specialists report. Run several specialists in parallel
+when independent artifacts are produced against frozen contracts.
 ```
 
 - [ ] **Step 2: `SKILL.md` — memory trigger**
@@ -652,7 +655,7 @@ been decided, read. Do not guess.
 In `## Teamet`, after the line `Delegera genom att anropa subagenter (Agent-verktyget) med specialistens namn och en tydlig uppgift.`, add a blank line and:
 
 ```
-Delegera när uppgiften faller inom en specialists domän — även när du själv skulle kunna svara. Att svara i stället för att delegera bryter mot hård regel 1; det är ingen genväg. Kör flera specialister parallellt när oberoende artefakter tas fram mot frysta kontrakt.
+Delegera när uppgiften faller inom en specialists domän — även när du själv skulle kunna svara. Att svara i specialistens ställe är ingen genväg — det kostar granskningen, domänomdömet och spårbarheten som delegeringen ger. Hantera direkt bara det som styrdokumenten redan lägger på dig: läsa \`memory/\`, underhålla handoff-filen, och sammanfatta det specialisterna rapporterar. Kör flera specialister parallellt när oberoende artefakter tas fram mot frysta kontrakt.
 ```
 
 - [ ] **Step 4: `src/agents/berit.ts` — memory trigger**
@@ -963,6 +966,66 @@ Append to `memory/decisions.md`, following the format already used in that file:
 ```bash
 git add memory/decisions.md
 git commit -m "docs: record the v0.4.0 model-generation decision"
+```
+
+---
+
+### Task 10: Propagate the autonomy grant to the nine specialists
+
+Added after a whole-branch review found that Task 5's autonomy grant only
+reached `docs/constitution.md`, `docs/decision-authority.md`, `SKILL.md`, and
+`berit.ts` — none of which is in a specialist's own context. `commands/<name>.md`
+tells each specialist to read `agents/<name>.md` and the handoff file, nothing
+else, so nine of the ten agents never saw the grant, and R11 measured a
+behavior nothing had instructed. This task closes that gap.
+
+**Files:**
+- Modify: `agents/anna.md`, `agents/astrid.md`, `agents/erik.md`,
+  `agents/gunnar.md`, `agents/ingrid.md`, `agents/maja.md`, `agents/pelle.md`,
+  `agents/sigrid.md`, `agents/torsten.md` (Swedish)
+- Regenerate: the corresponding nine `src/agents/<name>.ts` files (via
+  `npm run sync:agents` — never hand-edited)
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: the per-specialist grant that R11 (Task 8) actually exercises.
+
+- [ ] **Step 1: Add the grant paragraph to each `agents/*.md`**
+
+Insert this Swedish paragraph, with a blank line on either side, immediately
+after the existing `Beslutsnivå:` line where one exists (`pelle.md`,
+`sigrid.md`, `torsten.md`); otherwise immediately before the `## Handoff`
+heading (`anna.md`, `astrid.md`, `erik.md`, `gunnar.md`, `ingrid.md`,
+`maja.md`):
+
+```markdown
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
+```
+
+Do not otherwise reword these files, and do not touch any frontmatter —
+Ingrid's `tools: Read, Bash, Glob, Grep` in particular is a load-bearing
+safety property.
+
+- [ ] **Step 2: Regenerate and verify**
+
+```bash
+npm run sync:agents && git diff --stat src/agents/
+```
+
+Expected: nine `✓` lines, and exactly nine files changed in the diff stat —
+one per specialist, two lines inserted each.
+
+- [ ] **Step 3: Typecheck and commit**
+
+```bash
+npm run typecheck
+```
+
+Expected: silent, exit code 0.
+
+```bash
+git add agents/anna.md agents/astrid.md agents/erik.md agents/gunnar.md agents/ingrid.md agents/maja.md agents/pelle.md agents/sigrid.md agents/torsten.md src/agents/anna.ts src/agents/astrid.ts src/agents/erik.ts src/agents/gunnar.ts src/agents/ingrid.ts src/agents/maja.ts src/agents/pelle.ts src/agents/sigrid.ts src/agents/torsten.ts
+git commit -m "fix: propagate the tier A/B autonomy grant to all nine specialists"
 ```
 
 ---
