@@ -17,7 +17,7 @@ metadata:
 
 **How to apply:** Aliases mean a future model generation reaches the team with no code change. Pin a specific model only through the env override, and only on the SDK surface — plugin agents read static frontmatter. See [../docs/superpowers/specs/2026-07-24-opus-generation-upgrade-design.md](../docs/superpowers/specs/2026-07-24-opus-generation-upgrade-design.md).
 
-**Status:** landed on `feat/opus-generation-upgrade`; **not released**. The version is still 0.3.0 because the regression suite has not been run — see [../outputs/2026-07-24/regression-run-v0.4.0.md](../outputs/2026-07-24/regression-run-v0.4.0.md).
+**Status:** released as 0.4.0 on `feat/opus-generation-upgrade`. The suite passes by the project's own standard — dry analysis is `regression-test`'s default method, real runs are opt-in — at 13/13, with R7, R11 and R12 additionally run live. The six Berit tests are inspected, not executed; running them cleanly needs a session that did not write the prompts. See [../outputs/2026-07-24/regression-run.md](../outputs/2026-07-24/regression-run.md).
 
 [[constitution]] [[decision-authority]]
 

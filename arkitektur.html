@@ -376,7 +376,7 @@
 <div class="container" id="main-content">
 
   <header>
-    <div class="label" data-i18n="header.label">Claude Cowork Plugin — v0.3.0</div>
+    <div class="label" data-i18n="header.label">Claude Cowork Plugin — v0.4.0</div>
     <h1>berit-team</h1>
     <p data-i18n="header.desc">Multiagent-plugin som simulerar ett svenskt produktteam. En orchestrator (Berit) delegerar uppgifter till nio specialistagenter via Claude Agent SDK:ns subagent-system.</p>
   </header>
@@ -431,7 +431,7 @@
       <div class="code-header"><div class="dot-row"><span></span><span></span><span></span></div>.claude-plugin/plugin.json</div>
 <pre>{
   <span class="str">"name"</span>: <span class="str">"berit-team"</span>,
-  <span class="str">"version"</span>: <span class="str">"0.3.0"</span>,
+  <span class="str">"version"</span>: <span class="str">"0.4.0"</span>,
   <span class="str">"description"</span>: <span class="str">"Swedish product team orchestrated by Berit..."</span>,
   <span class="str">"author"</span>: { <span class="str">"name"</span>: <span class="str">"Jonathan Svedelius"</span> },
   <span class="str">"keywords"</span>: [<span class="str">"orchestrator"</span>, <span class="str">"multi-agent"</span>, <span class="str">"product-team"</span>, <span class="str">"swedish"</span>]
@@ -1077,11 +1077,11 @@ You review and report only.</pre>
     </div>
   </section>
 
-  <!-- 12 Operating model (v0.3.0) -->
+  <!-- 12 Operating model (v0.4.0) -->
   <section>
-    <div class="section-num" data-i18n="s12.num">12 — Operativ modell (v0.3.0)</div>
+    <div class="section-num" data-i18n="s12.num">12 — Operativ modell (v0.4.0)</div>
     <h2 data-i18n="s12.title">Konstitution, beslut, minne</h2>
-    <p data-i18n="s12.desc">v0.3.0 lyfter teamet från en ren delegeringsloop till ett operativt lager som överlever mellan sessioner. Fyra <code style="color:var(--accent)">docs/</code>-filer kodifierar regler och beslutsrätt, <code style="color:var(--accent)">memory/</code> håller kontext över tid, och två kommandon ramar in varje session.</p>
+    <p data-i18n="s12.desc">v0.4.0 lyfter teamet från en ren delegeringsloop till ett operativt lager som överlever mellan sessioner. Fyra <code style="color:var(--accent)">docs/</code>-filer kodifierar regler och beslutsrätt, <code style="color:var(--accent)">memory/</code> håller kontext över tid, och två kommandon ramar in varje session.</p>
     <div class="spacer"></div>
 
     <div class="principle-grid">
@@ -1158,7 +1158,7 @@ You review and report only.</pre>
   <footer>
     <div class="footer-left">
       <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text-dim);">berit-team</span>
-      <span style="font-family: var(--mono); font-size: 11px; color: var(--text-faint);">v0.3.0 — 2026-05-20</span>
+      <span style="font-family: var(--mono); font-size: 11px; color: var(--text-faint);">v0.4.0 — 2026-05-20</span>
     </div>
     <div class="footer-links">
       <a href="index.html" class="footer-link">Landningssida</a>
@@ -1173,7 +1173,7 @@ You review and report only.</pre>
   var HO = '\n\n<span class="kw">## Handoff</span>\n<span class="cm">1. READ .context/handoff.md before you start, if it exists.\n2. Build on decisions and contracts that already exist\n   \u2014 don\u2019t invent new things that conflict.\n3. When done: report in your final message what you\n   delivered, design choices, and dependencies for the next step.\n4. Do NOT write to handoff.md as a subagent under Berit\n   \u2014 she is the sole writer and records your deliveries.</span>';
   var en = {
     // Header
-    'header.label': 'Claude Cowork Plugin — v0.3.0',
+    'header.label': 'Claude Cowork Plugin — v0.4.0',
     'header.desc': 'Multi-agent plugin that simulates a Swedish product team. An orchestrator (Berit) delegates tasks to nine specialist agents via the Claude Agent SDK\u2019s subagent system.',
 
     // 01 — File Structure
@@ -1304,9 +1304,9 @@ You review and report only.</pre>
     's11.card3.desc': 'Berit delivers: what was built, design decisions, known limitations. In Swedish.',
 
     // 12 — Operating Model
-    's12.num': '12 — Operating Model (v0.3.0)',
+    's12.num': '12 — Operating Model (v0.4.0)',
     's12.title': 'Constitution, Decisions, Memory',
-    's12.desc': 'v0.3.0 lifts the team from a pure delegation loop to an operating layer that survives across sessions. Four <code style="color:var(--accent)">docs/</code> files codify rules and decision authority, <code style="color:var(--accent)">memory/</code> keeps context over time, and two commands bracket every session.',
+    's12.desc': 'v0.4.0 lifts the team from a pure delegation loop to an operating layer that survives across sessions. Four <code style="color:var(--accent)">docs/</code> files codify rules and decision authority, <code style="color:var(--accent)">memory/</code> keeps context over time, and two commands bracket every session.',
     's12.card1.title': 'Constitution',
     's12.card1.desc': '<code>docs/constitution.md</code> collects hard rules: what Berit may and may not do, how specialists deliver, when handoff is mandatory. One page — read first at every session.',
     's12.card2.title': 'Decision Authority',

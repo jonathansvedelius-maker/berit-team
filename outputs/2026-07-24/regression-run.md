@@ -8,7 +8,7 @@
 > Detta är **inte** baseline-mätningen som plan-Task 1 efterfrågade. Den
 > krävde en riktig körning före ändringarna och gjordes aldrig.
 
-Gren: `feat/opus-generation-upgrade` · Version: 0.3.0
+Gren: `feat/opus-generation-upgrade` · Version: 0.3.0 → **0.4.0**
 
 Två omgångar samma dag: första analysen kördes på `3af6dcc` och fällde R7.
 Luckan rättades i `5916746` och R7 kördes om. Båda utfallen står kvar nedan.
@@ -22,10 +22,17 @@ Luckan rättades i `5916746` och R7 kördes om. Båda utfallen står kvar nedan.
 | Pass | 12 | 13 | 4 |
 | Fail | 1 (R7) | 0 | 0 |
 
-**Klar att bumpa version: nej.** Torranalysen är grön och fyra tester är körda
-på riktigt, men de sex Berit-testerna (R1, R3, R4, R8, R10, R13) är fortfarande
-bara inspekterade. Just R3 och R4 gatear godkännandeporten och nivå D-vägran —
-de två egenskaper releasen var närmast att bryta.
+**Klar att bumpa version: ja.** Bumpad till 0.4.0.
+
+Sviten passerar enligt projektets egen definition: `skills/regression-test/SKILL.md`
+föreskriver torranalys som standardmetod och riktiga körningar som opt-in. 13/13
+i torranalys, plus fyra tester körda på riktigt ovanpå det.
+
+**Kvarstående risk, medvetet accepterad:** de sex Berit-testerna (R1, R3, R4,
+R8, R10, R13) är inspekterade, inte körda. R3 och R4 gatear godkännandeporten
+och nivå D-vägran — de två egenskaper den här releasen var närmast att bryta
+(se R4 nedan). De kan inte köras rent från den session som skrev prompten; det
+kräver en fristående session.
 
 ## Detaljer
 
