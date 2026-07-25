@@ -49,7 +49,7 @@ Bash-prompten är en **tyst fälla** i icke-interaktiva miljöer:
 | `"default"` | Frågar interaktivt även för fil-edits. Säkrast, men avbryter ofta. |
 | `"bypassPermissions"` | Tillåter allt utan att fråga. Kör bara mot repos där du accepterar att agenterna skriver fritt. |
 
-**Viktigt:** den här appen hårdkodar `"acceptEdits"` på `src/index.ts:19`. Byt läge genom att antingen fork:a `src/index.ts` och ändra raden, eller skriv en egen wrapper som anropar `query()` med ditt valda mode. Det finns i nuläget ingen flagga eller miljövariabel som styr det utifrån.
+**Viktigt:** den här appen hårdkodar `"acceptEdits"` på `src/index.ts:25`. Byt läge genom att antingen fork:a `src/index.ts` och ändra raden, eller skriv en egen wrapper som anropar `query()` med ditt valda mode. Det finns i nuläget ingen flagga eller miljövariabel som styr det utifrån.
 
 ## Användning från ett annat projekt
 
@@ -193,7 +193,7 @@ Kör inte Berit mot hemliga repos på delad infra (shared build agents, multi-te
 
 ### Prompten läcker i stdout och shell-historik
 
-Prompten skickas som argv, så den hamnar i din shell-historik (`~/.bash_history`, `~/.zsh_history`, PowerShell-history). Den skrivs **dessutom** till stdout som en intro-rubrik vid körningsstart (`Berit-teamet startar: <din prompt>`, `src/index.ts:12`) — inte bara i själva slutrapporten. I CI betyder det att prompten syns i jobb-loggen även om du tror att du maskerat argv via secrets.
+Prompten skickas som argv, så den hamnar i din shell-historik (`~/.bash_history`, `~/.zsh_history`, PowerShell-history). Den skrivs **dessutom** till stdout som en intro-rubrik vid körningsstart (`Berit-teamet startar: <din prompt>`, `src/index.ts:18`) — inte bara i själva slutrapporten. I CI betyder det att prompten syns i jobb-loggen även om du tror att du maskerat argv via secrets.
 
 Undvik hemligheter, API-nycklar, personuppgifter och kundnamn i prompts om sessionen kan bli publik (CI-loggar, inspelade demos, skärmdelning).
 
@@ -209,7 +209,7 @@ Behöver du köra en specifik modell — reproducera en bugg, jämföra två gen
 | `BERIT_MODEL_<AGENT>` | Gäller en agent. Slår `BERIT_MODEL`. Agentnamnet i versaler: `BERIT_MODEL_INGRID`. |
 
 ```bash
-BERIT_MODEL_INGRID=opus npm start -- "Granska auth-flödet"
+BERIT_MODEL_INGRID=claude-opus-4-8 npm start -- "Granska auth-flödet"
 ```
 
 Tomma värden och enbart blanksteg ignoreras — då används aliaset från `agents/<namn>.md`.

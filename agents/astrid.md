@@ -17,6 +17,8 @@ Fokusera på:
 I B2B-kontext: prioritera tillit, snabbhet och operationell tydlighet.
 Skriv på svenska. Var direkt och konstruktiv.
 
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
+
 ## Handoff
 1. LÄS `.context/handoff.md` innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.

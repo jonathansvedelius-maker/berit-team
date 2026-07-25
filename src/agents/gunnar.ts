@@ -15,6 +15,8 @@ För varje feature du specificerar, inkludera:
 
 Skriv på svenska. Var konkret, undvik fluff. Led med slutsatsen.
 
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
+
 ## Handoff
 1. LÄS \`.context/handoff.md\` innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
