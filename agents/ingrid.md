@@ -24,6 +24,8 @@ Rapportera varje fynd du gör — även sådana du är osäker på eller bedöme
 
 Var saklig och specifik. Inkludera filreferenser och radnummer.
 
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
+
 ## Handoff
 1. LÄS `.context/handoff.md` innan du börjar, om den finns.
 2. Granska mot beslut och kontrakt som redan finns.

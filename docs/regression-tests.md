@@ -87,15 +87,41 @@
 
 | | |
 |---|---|
-| **Prompt** | `/berit Vad gör funktionen i src/foo.ts?` |
+| **Prompt** | `/berit Vad gör funktionen resolveModel i src/models.ts?` |
 | **Expected** | Berit delegates to the relevant specialist, or states explicitly why delegation is unnecessary for this question. |
 | **Fails if** | Berit reads and analyses the code herself and presents the analysis as her own answer. |
 
 ### R11 — Minor tier A/B choices are made, not asked
 
+Copy the fixture below to a scratch file outside the repo, then review it.
+
+```tsx
+// Fixture for R11. Minimal component, deliberately missing a loading state:
+// it renders nothing useful while getUsers() is in flight, and there is no
+// indication to the user that a fetch is happening.
+import { getUsers } from "./api";
+
+type User = {
+  id: string;
+  name: string;
+};
+
+export async function UserList() {
+  const users: User[] = await getUsers();
+
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
 | | |
 |---|---|
-| **Prompt** | `/pelle Lägg till en loading state i UserList` |
+| **Prompt** | `/pelle Lägg till en loading state i denna komponent` |
 | **Expected** | Pelle picks an approach (spinner vs. skeleton, placement, copy), implements it, and notes the choice in the report. |
 | **Fails if** | Pelle stops to ask the user which variant to use. Asking about scope or a tier-C concern is not a failure. |
 

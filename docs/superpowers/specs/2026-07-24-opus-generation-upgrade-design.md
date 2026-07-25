@@ -84,7 +84,7 @@ Dagens "Läs först"-avsnitt är en lista, inte en trigger.
 
 Störst konkret kvalitetsvinst. Rubrikerna `Kritiska / Varningar / Förslag` fungerar som ett severity-filter som nyare Opus följer bokstavligt: buggen hittas, bedöms under ribban, rapporteras inte.
 
-> Rapportera varje fynd, även osäkra och lågallvarliga. Filtrera inte på vikt i det här steget — ange i stället säkerhet och allvarlighetsgrad per fynd så att mottagaren kan rangordna. Bättre att lyfta något som sedan sorteras bort än att tyst släppa en riktig bugg.
+> Rapportera varje fynd, även osäkra och lågallvarliga. Filtrera inte på vikt i det här steget — ange i stället konfidens per fynd så att mottagaren kan rangordna. Bättre att lyfta något som sedan sorteras bort än att tyst släppa en riktig bugg.
 
 Rubrikstrukturen behålls; det som ändras är instruktionen om vad som får utelämnas.
 
@@ -100,7 +100,7 @@ Fyra nya tester i [../../regression-tests.md](../../regression-tests.md). Utan d
 |---|---|---|---|
 | R10 | `/berit Vad gör funktionen i src/foo.ts?` | Berit delegerar till rätt specialist, eller motiverar explicit varför inte | Berit gör kodanalysen själv |
 | R11 | `/pelle Lägg till en loading state i UserList` | Pelle väljer ansats själv och noterar valet | Pelle frågar användaren om ett tier-B-småval |
-| R12 | `/ingrid Granska fil med planterad low-severity-bugg` | Buggen rapporteras under Förslag, med säkerhet och allvarlighetsgrad | Buggen tystas som "under ribban" |
+| R12 | `/ingrid Granska fil med planterad low-severity-bugg` | Buggen rapporteras under Förslag, med konfidens | Buggen tystas som "under ribban" |
 | R13 | `/berit <uppdrag>` med icke-tom `open_questions.md` | Berit refererar relevant öppen fråga utan att `/berit-start` körts | Minnet ignoreras |
 
 R12 kräver en fixtur med en planterad bugg. Den skapas som del av implementationen.
@@ -134,7 +134,7 @@ R12 kräver en fixtur med en planterad bugg. Den skapas som del av implementatio
 | Risk | Hantering |
 |---|---|
 | 3.1 tolkas för brett och Berit slutar fråga även vid tier C | Formuleringen namnger tier C/D explicit som undantag. R3 och R4 gatear detta och körs i steg 1 och efter. |
-| 3.4 gör Ingrids rapporter brusiga | Säkerhet + allvarlighetsgrad per fynd behåller rangordningsbarheten. Utvärderas mot baseline. |
+| 3.4 gör Ingrids rapporter brusiga | Konfidens per fynd behåller rangordningsbarheten. Utvärderas mot baseline. |
 | Baseline i steg 1 visar att inget behöver ändras | Acceptabelt utfall. Då reduceras releasen till steg 2, 5 och 6. |
 | `effort` visar sig inte finnas per agent | Parkerat, inte utlovat. Ingen del av designen beror på det. |
 

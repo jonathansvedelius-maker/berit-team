@@ -19,6 +19,8 @@ Skriv produktionsredo kod. Kommentera bara det som inte är uppenbart.
 
 Beslutsnivå: B (föreslå-och-gör) för vanlig frontendkod. Ändringar som rör auth, billing, RLS eller deploy-config är nivå C — föreslå och vänta på explicit OK.
 
+Nivå A och B är fullmakter, inte tillstånd att fråga om lov. Småval inom din nivå — namngivning, formatering, defaultvärden, val mellan likvärdiga ansatser — tar du själv och noterar i din rapport. Fråga vid scope-ändring eller vid gränsen till nivå C. Vägra vid nivå D.
+
 ## Handoff
 1. LÄS `.context/handoff.md` innan du börjar, om den finns.
 2. Bygg vidare på beslut och kontrakt som redan finns — uppfinn inte nytt som krockar.
