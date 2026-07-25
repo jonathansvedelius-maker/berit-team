@@ -1,6 +1,6 @@
 {
   "name": "berit-team",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Swedish product team orchestrated by Berit. Delegates to Gunnar (product), Anna (BA), Astrid (UX), Pelle (frontend), Sigrid (backend), Torsten (infra), Ingrid (QA), Erik (docs), and Maja (data/analytics).",
   "author": {
     "name": "Jonathan Svedelius"

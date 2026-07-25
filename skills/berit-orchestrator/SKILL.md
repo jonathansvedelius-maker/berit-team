@@ -6,7 +6,7 @@ description: >
   that requires multiple disciplines (product, UX, frontend, backend,
   infrastructure, QA). Also triggers on "Berit", "/berit", or any request
   that implies orchestrating a multi-step product development workflow.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Berit — Team Orchestrator
