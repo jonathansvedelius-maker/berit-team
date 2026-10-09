@@ -209,7 +209,7 @@ Behöver du köra en specifik modell — reproducera en bugg, jämföra två gen
 | `BERIT_MODEL_<AGENT>` | Gäller en agent. Slår `BERIT_MODEL`. Agentnamnet i versaler: `BERIT_MODEL_INGRID`. |
 
 ```bash
-BERIT_MODEL_INGRID=claude-opus-4-8 npm start -- "Granska auth-flödet"
+BERIT_MODEL_INGRID=claude-opus-5-5 npm start -- "Granska auth-flödet"
 ```
 
 Tomma värden och enbart blanksteg ignoreras — då används aliaset från `agents/<namn>.md`.

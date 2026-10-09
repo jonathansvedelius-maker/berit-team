@@ -8,14 +8,14 @@ test("falls back to the declared alias when nothing is set", () => {
 
 test("BERIT_MODEL overrides every agent", () => {
   assert.equal(
-    resolveModel("ingrid", "opus", { BERIT_MODEL: "claude-opus-4-8" }),
-    "claude-opus-4-8",
+    resolveModel("ingrid", "opus", { BERIT_MODEL: "claude-opus-5-5" }),
+    "claude-opus-5-5",
   );
 });
 
 test("BERIT_MODEL_<AGENT> beats BERIT_MODEL", () => {
-  const env = { BERIT_MODEL: "sonnet", BERIT_MODEL_INGRID: "claude-opus-4-8" };
-  assert.equal(resolveModel("ingrid", "opus", env), "claude-opus-4-8");
+  const env = { BERIT_MODEL: "sonnet", BERIT_MODEL_INGRID: "claude-opus-5-5" };
+  assert.equal(resolveModel("ingrid", "opus", env), "claude-opus-5-5");
   assert.equal(resolveModel("erik", "sonnet", env), "sonnet");
 });
 
@@ -29,8 +29,8 @@ test("applyModelOverrides rewrites the model field and nothing else", () => {
     ingrid: { model: "opus", tools: ["Read"], prompt: "p" },
     erik: { model: "sonnet", tools: ["Write"], prompt: "q" },
   };
-  const out = applyModelOverrides(agents, { BERIT_MODEL_INGRID: "claude-opus-4-8" });
-  assert.equal(out.ingrid.model, "claude-opus-4-8");
+  const out = applyModelOverrides(agents, { BERIT_MODEL_INGRID: "claude-opus-5-5" });
+  assert.equal(out.ingrid.model, "claude-opus-5-5");
   assert.equal(out.erik.model, "sonnet");
   assert.deepEqual(out.ingrid.tools, ["Read"]);
   assert.equal(out.ingrid.prompt, "p");

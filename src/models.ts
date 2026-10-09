@@ -8,7 +8,7 @@
  * incident.
  *
  * Precedence, highest first:
- *   1. BERIT_MODEL_<AGENT>   e.g. BERIT_MODEL_INGRID=claude-opus-4-8
+ *   1. BERIT_MODEL_<AGENT>   e.g. BERIT_MODEL_INGRID=claude-opus-5-5
  *   2. BERIT_MODEL           applies to every agent
  *   3. the alias declared in agents/<name>.md
  *
